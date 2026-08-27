@@ -1,0 +1,1692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Hardiest Method</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=Monsieur+La+Doulaise&display=swap">
+
+<style>
+:root{
+  --ground:#F7F6EE; --surface:#FFFFFF; --surface-2:#EEEDE0;
+  --ink:#22261A; --ink-2:#585D45; --ink-3:#8A8E72;
+  --rule:#DAD8C6; --rule-soft:#E9E7D9;
+  --accent:#5D6C35; --accent-2:#7E8F4E; --accent-soft:#E7EAD5;
+  --warn:#AC4F72; --warn-soft:#F9E3EB;
+  --crit:#8C2F35; --crit-soft:#F7DFE0;
+  --good:#4A7543; --good-soft:#E2EDDD;
+  --seg-on-text:#FFFFFF;
+  --shadow:0 1px 2px rgba(34,38,26,.06), 0 8px 24px rgba(34,38,26,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#14150E; --surface:#1D1F15; --surface-2:#272A1F;
+    --ink:#EFEDE1; --ink-2:#AFB199; --ink-3:#83866D;
+    --rule:#34372A; --rule-soft:#24271C;
+    --accent:#AEC073; --accent-2:#C6D496; --accent-soft:#2B3117;
+    --warn:#EA9AB6; --warn-soft:#33212B;
+    --crit:#E0827F; --crit-soft:#301C1B;
+    --good:#88C47B; --good-soft:#1D2E1A;
+    --seg-on-text:#14150E;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14150E; --surface:#1D1F15; --surface-2:#272A1F;
+  --ink:#EFEDE1; --ink-2:#AFB199; --ink-3:#83866D;
+  --rule:#34372A; --rule-soft:#24271C;
+  --accent:#AEC073; --accent-2:#C6D496; --accent-soft:#2B3117;
+  --warn:#EA9AB6; --warn-soft:#33212B;
+  --crit:#E0827F; --crit-soft:#301C1B;
+  --good:#88C47B; --good-soft:#1D2E1A;
+  --seg-on-text:#14150E;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  font-size:17px; line-height:1.68; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px 96px}
+.prose{max-width:67ch}
+h3,.label,.num,th,.pill,.kicker{font-family:"IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif}
+.mono,td.n,.calc input,.calc output,.big,.tick{font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace; font-variant-numeric:tabular-nums}
+h1,h2{font-family:"Monsieur La Doulaise", "Snell Roundhand", "Apple Chancery", "Segoe Script", "Brush Script MT", cursive; font-weight:400; text-transform:none; overflow:visible}
+h1{font-size:clamp(4rem,10.5vw,7.2rem); line-height:1.16; letter-spacing:.012em; margin:0; text-wrap:balance; padding-bottom:.1em}
+h2{font-size:clamp(2.5rem,5.6vw,3.7rem); line-height:1.2; letter-spacing:.012em; margin:0; text-wrap:balance; color:var(--accent); padding-bottom:.06em}
+h3{font-size:1.06rem; font-weight:700; letter-spacing:.01em; margin:0 0 .4rem}
+p{margin:0 0 1.05rem}
+a{color:var(--accent); text-underline-offset:3px}
+strong{font-weight:600}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+/* ---------- masthead ---------- */
+header.top{
+  border-bottom:1px solid var(--rule);
+  background:
+    linear-gradient(var(--rule-soft) 1px, transparent 1px) 0 0/100% 28px,
+    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px) 0 0/28px 100%,
+    var(--surface);
+}
+.masthead{max-width:1120px; margin:0 auto; padding:76px 24px 56px}
+.kicker{
+  font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--warn); font-weight:600; margin:0 0 18px;
+}
+.sub{max-width:60ch; color:var(--ink-2); font-size:1.09rem; margin:22px 0 0}
+.stamp{
+  margin-top:34px; display:flex; flex-wrap:wrap; gap:10px 26px;
+  font-family:"IBM Plex Mono",monospace; font-size:.76rem; color:var(--ink-3);
+  letter-spacing:.02em; text-transform:uppercase;
+}
+
+/* ---------- nav ---------- */
+nav.toc{
+  position:sticky; top:0; z-index:20; background:var(--ground);
+  border-bottom:1px solid var(--rule); margin-bottom:8px;
+}
+nav.toc ol{
+  max-width:1120px; margin:0 auto; padding:0 18px; list-style:none;
+  display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin;
+}
+nav.toc a{
+  display:block; padding:12px 12px; font-family:"IBM Plex Sans Condensed",sans-serif;
+  font-size:.8rem; letter-spacing:.03em; color:var(--ink-2); text-decoration:none;
+  white-space:nowrap; border-bottom:2px solid transparent;
+}
+nav.toc a:hover{color:var(--ink); border-bottom-color:var(--accent)}
+nav.toc a span{color:var(--ink-3); margin-right:6px; font-family:"IBM Plex Mono",monospace; font-size:.72rem}
+
+/* ---------- sections ---------- */
+section{padding:64px 0 8px; scroll-margin-top:56px}
+.sechead{display:flex; align-items:baseline; gap:16px; margin-bottom:26px; border-top:2px solid var(--accent); padding-top:16px}
+.sechead .part{
+  font-family:"IBM Plex Mono",monospace; font-size:.75rem; color:var(--ink-3);
+  letter-spacing:.1em; flex:none; padding-top:.35rem;
+}
+.lede{font-size:1.13rem; color:var(--ink-2); max-width:62ch; margin:-8px 0 28px}
+
+/* ---------- cards & grids ---------- */
+.grid{display:grid; gap:14px}
+@media(min-width:720px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:20px 22px; box-shadow:var(--shadow)}
+.card h3{font-size:.78rem; text-transform:uppercase; letter-spacing:.11em; color:var(--ink-3); font-weight:600}
+.big{font-size:2rem; line-height:1.1; font-weight:500; letter-spacing:-.02em; display:block; margin:2px 0 4px}
+.card .note{font-size:.86rem; color:var(--ink-2); line-height:1.5; margin:0; font-family:"IBM Plex Serif",serif}
+.delta{font-family:"IBM Plex Mono",monospace; font-size:.8rem; letter-spacing:.01em}
+.up{color:var(--good)} .down{color:var(--crit)} .flat{color:var(--ink-3)}
+
+.pill{
+  display:inline-flex; align-items:center; gap:6px; font-size:.68rem; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:3px;
+}
+.pill.calm{background:var(--good-soft); color:var(--good)}
+.pill.live{background:var(--accent-soft); color:var(--accent)}
+.pill.hot{background:var(--warn-soft); color:var(--warn)}
+.pill.extreme{background:var(--crit-soft); color:var(--crit)}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:6px; background:var(--surface); box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:.9rem}
+caption{text-align:left; padding:16px 20px 4px; font-size:.78rem; text-transform:uppercase; letter-spacing:.11em; color:var(--ink-3); font-family:"IBM Plex Sans Condensed",sans-serif; font-weight:600}
+th{
+  text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--ink-3); font-weight:600; padding:12px 11px; border-bottom:1px solid var(--rule);
+  white-space:nowrap;
+}
+th.r,td.n{text-align:right}
+td{padding:11px; border-bottom:1px solid var(--rule-soft); color:var(--ink-2); font-family:"IBM Plex Serif",serif}
+td.name{color:var(--ink); font-weight:600; font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.95rem; white-space:nowrap}
+td.n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--ink); font-size:.88rem}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface-2)}
+.sm{font-size:.8rem; color:var(--ink-3)}
+
+/* ---------- bar ruler ---------- */
+.bar{display:block; height:9px; border-radius:0 4px 4px 0; background:var(--accent); min-width:2px}
+.barcell{width:172px; min-width:172px; padding-right:14px !important}
+.barrow{display:flex; align-items:center; gap:10px}
+.barrow .tick{font-size:.76rem; color:var(--ink-2); flex:none; width:52px; text-align:right}
+.bartrack{flex:1; background:var(--surface-2); border-radius:0 4px 4px 0; height:9px}
+
+/* ---------- rule list ---------- */
+.rules{counter-reset:r; list-style:none; padding:0; margin:0; display:grid; gap:12px}
+.rules > li{
+  counter-increment:r; background:var(--surface); border:1px solid var(--rule);
+  border-left:3px solid var(--accent); border-radius:5px; padding:16px 20px 16px 18px;
+  display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;
+}
+.rules > li::before{
+  content:"R" counter(r); font-family:"IBM Plex Mono",monospace; font-size:.75rem;
+  color:var(--accent); font-weight:500; padding-top:.24rem; letter-spacing:.04em;
+}
+.rules h3{margin-bottom:.25rem}
+.rules p{margin:0; font-size:.95rem; color:var(--ink-2)}
+.rules code{
+  font-family:"IBM Plex Mono",monospace; font-size:.85em; background:var(--surface-2);
+  padding:1px 5px; border-radius:3px; color:var(--ink);
+}
+
+/* ---------- pull quote ---------- */
+blockquote{
+  margin:34px 0; padding:22px 0 22px 26px; border-left:3px solid var(--accent);
+  font-size:1.2rem; line-height:1.5; color:var(--ink); max-width:56ch; font-style:italic;
+}
+blockquote cite{display:block; margin-top:12px; font-style:normal; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-family:"IBM Plex Sans Condensed",sans-serif}
+
+/* ---------- callout ---------- */
+.callout{border:1px solid var(--rule); border-radius:6px; padding:18px 22px; background:var(--surface); margin:24px 0}
+.callout.warn{border-color:var(--warn); background:var(--warn-soft)}
+.callout.warn h3{color:var(--warn)}
+.callout h3{font-size:.76rem; text-transform:uppercase; letter-spacing:.11em; color:var(--ink-3)}
+.callout p{margin:0; font-size:.95rem; color:var(--ink-2)}
+.callout.warn p{color:var(--ink)}
+
+/* ---------- calculator ---------- */
+.calc{background:var(--surface); border:1px solid var(--rule); border-radius:6px; box-shadow:var(--shadow); overflow:hidden}
+.calc .head{padding:18px 22px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap}
+.calc .head h3{margin:0; font-size:.78rem; text-transform:uppercase; letter-spacing:.11em; color:var(--ink-3)}
+.calcbody{display:grid; gap:0}
+@media(min-width:820px){ .calcbody{grid-template-columns:1.1fr .9fr} }
+.inputs{padding:22px; display:grid; gap:16px}
+@media(min-width:520px){ .inputs{grid-template-columns:1fr 1fr} }
+.field{display:flex; flex-direction:column; gap:5px}
+.field label{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:600}
+.field input, .field select{
+  font-family:"IBM Plex Mono",monospace; font-size:.95rem; padding:9px 11px;
+  border:1px solid var(--rule); border-radius:4px; background:var(--ground); color:var(--ink); width:100%;
+}
+.results{padding:22px; background:var(--surface-2); border-left:1px solid var(--rule); display:grid; gap:14px; align-content:start}
+@media(max-width:819px){ .results{border-left:none; border-top:1px solid var(--rule)} }
+.res{display:flex; justify-content:space-between; align-items:baseline; gap:12px; border-bottom:1px dashed var(--rule); padding-bottom:9px}
+.res:last-of-type{border-bottom:none}
+.res .k{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.74rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); font-weight:600}
+.res .v{font-family:"IBM Plex Mono",monospace; font-size:1.12rem; color:var(--ink); font-variant-numeric:tabular-nums}
+#verdict{font-size:.88rem; line-height:1.5; padding:12px 14px; border-radius:4px; background:var(--surface); border:1px solid var(--rule); color:var(--ink-2)}
+#verdict.bad{border-color:var(--crit); background:var(--crit-soft); color:var(--ink)}
+#verdict.ok{border-color:var(--good); background:var(--good-soft); color:var(--ink)}
+
+/* ---------- checklist ---------- */
+.check{list-style:none; padding:0; margin:0; display:grid; gap:9px}
+.check li{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; font-size:.95rem; color:var(--ink-2)}
+.check li::before{content:"□"; font-family:"IBM Plex Mono",monospace; color:var(--accent); font-size:1.05rem; line-height:1.4}
+
+footer{border-top:1px solid var(--rule); margin-top:72px; padding-top:28px; color:var(--ink-3); font-size:.85rem}
+footer a{color:var(--ink-2)}
+.srcs{columns:2; column-gap:32px; font-size:.8rem; line-height:1.6; margin-top:10px}
+@media(max-width:640px){ .srcs{columns:1} }
+.srcs a{display:block; margin-bottom:5px; color:var(--ink-2); text-decoration:none}
+.srcs a:hover{color:var(--accent); text-decoration:underline}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+
+/* ---------- equation ---------- */
+.eq{background:var(--accent-soft); border:1px solid var(--accent); border-radius:6px; padding:28px 24px; text-align:center; margin:26px 0}
+.eq .f{font-family:"IBM Plex Mono",monospace; font-size:clamp(1.25rem,3.4vw,1.9rem); font-weight:500; color:var(--accent); letter-spacing:-.01em}
+.eq .g{font-size:.94rem; color:var(--ink-2); margin:14px auto 0; max-width:52ch; font-family:"IBM Plex Serif",serif}
+
+/* ---------- stage spine ---------- */
+.spine{position:relative; margin-top:8px}
+.spine::before{content:""; position:absolute; left:19px; top:14px; bottom:30px; width:2px; background:var(--rule)}
+.stage{position:relative; padding-left:58px; margin-bottom:18px}
+.dot{position:absolute; left:0; top:6px; width:40px; height:40px; border-radius:50%; background:var(--surface); border:2px solid var(--rule); display:flex; align-items:center; justify-content:center; font-family:"IBM Plex Mono",monospace; font-size:.8rem; font-weight:500; color:var(--ink-3); z-index:1}
+.stage.on .dot{border-color:var(--good); color:var(--good)}
+.scard{background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:19px 22px; box-shadow:var(--shadow)}
+.stage.on .scard{border-color:var(--good)}
+.stitle{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap}
+.stitle h3{margin:0 0 .3rem}
+.when{font-family:"IBM Plex Mono",monospace; font-size:.71rem; color:var(--ink-3); letter-spacing:.05em; white-space:nowrap; padding-top:.3rem}
+.scard > p{font-size:.95rem; color:var(--ink-2); margin:0 0 .75rem; font-family:"IBM Plex Serif",serif}
+.scard > p:last-of-type{margin-bottom:0}
+.build,.gatebox{border-radius:5px; padding:11px 14px; margin-top:11px}
+.build{background:var(--surface-2)}
+.gatebox{background:var(--warn-soft)}
+.build h4,.gatebox h4{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.66rem; text-transform:uppercase; letter-spacing:.14em; font-weight:600; margin:0 0 .3rem}
+.build h4{color:var(--ink-3)} .gatebox h4{color:var(--warn)}
+.build p{margin:0; font-size:.92rem; color:var(--ink-2); font-family:"IBM Plex Serif",serif}
+.gatebox p{margin:0; font-size:.92rem; color:var(--ink); font-family:"IBM Plex Serif",serif}
+.scard code{font-family:"IBM Plex Mono",monospace; font-size:.85em; background:var(--surface-2); padding:1px 5px; border-radius:3px; color:var(--ink)}
+.gatebox code{background:var(--surface)}
+label.gate{display:inline-flex; align-items:center; gap:8px; margin-top:13px; font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-3); cursor:pointer; user-select:none}
+label.gate input{width:16px; height:16px; accent-color:var(--good); cursor:pointer}
+
+/* ---------- gate progress ---------- */
+.prog{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:13px 18px; margin:0 0 26px}
+.prog .bar{flex:1; height:6px; background:var(--surface-2); border-radius:3px; overflow:hidden}
+.prog .fill{height:100%; width:0%; background:var(--good); border-radius:3px; transition:width .25s ease}
+.prog .txt{font-family:"IBM Plex Mono",monospace; font-size:.74rem; color:var(--ink-3); white-space:nowrap}
+
+/* ---------- view switcher ---------- */
+.switch{position:sticky; top:0; z-index:40; background:var(--ground); border-bottom:1px solid var(--rule)}
+.switch .in{max-width:1120px; margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.seg{display:inline-flex; border:1px solid var(--rule); border-radius:6px; overflow:hidden; background:var(--surface)}
+.seg button{
+  appearance:none; border:0; background:transparent; cursor:pointer;
+  font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.8rem; font-weight:600;
+  letter-spacing:.04em; color:var(--ink-2); padding:8px 16px; border-right:1px solid var(--rule);
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-selected="true"]{background:var(--accent); color:var(--seg-on-text)}
+.switch .hint{font-family:"IBM Plex Mono",monospace; font-size:.72rem; color:var(--ink-3)}
+[hidden]{display:none !important}
+
+/* ---------- drill cards ---------- */
+.drillwrap{max-width:1120px; margin:0 auto; padding:34px 24px 96px}
+.drillhead{border-top:2px solid var(--accent); padding-top:16px; margin-bottom:8px}
+.drills{display:grid; gap:14px; margin-top:24px}
+@media(min-width:940px){ .drills{grid-template-columns:1fr 1fr} }
+.drill{background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:18px 20px; box-shadow:var(--shadow); display:flex; flex-direction:column}
+.drill.on{border-color:var(--good)}
+.dhead{display:flex; align-items:baseline; gap:10px; margin-bottom:4px}
+.dnum{font-family:"IBM Plex Mono",monospace; font-size:.74rem; color:var(--accent); font-weight:500; flex:none}
+.dhead h3{margin:0; font-size:1.02rem; flex:1}
+.dtime{font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--ink-3); white-space:nowrap}
+.dgate{font-size:.88rem; color:var(--ink-2); font-style:italic; margin:0 0 12px; padding-bottom:12px; border-bottom:1px solid var(--rule-soft)}
+.drill h4{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.65rem; text-transform:uppercase; letter-spacing:.14em; font-weight:600; color:var(--ink-3); margin:0 0 .4rem}
+.drill ol{margin:0 0 14px; padding-left:1.15rem; font-size:.9rem; color:var(--ink-2); font-family:"IBM Plex Serif",serif}
+.drill ol li{margin-bottom:.4rem}
+.drill ol li::marker{font-family:"IBM Plex Mono",monospace; font-size:.82rem; color:var(--accent)}
+.pass{background:var(--good-soft); border-radius:5px; padding:10px 13px; margin-top:auto}
+.pass h4{color:var(--good)}
+.pass p{margin:0; font-size:.89rem; color:var(--ink); font-family:"IBM Plex Serif",serif}
+.drill code{font-family:"IBM Plex Mono",monospace; font-size:.84em; background:var(--surface-2); padding:1px 5px; border-radius:3px; color:var(--ink)}
+.drill label.gate{margin-top:12px}
+
+/* ---------- skip box ---------- */
+.card.skip{background:var(--crit-soft); border-color:var(--crit)}
+.card.skip h3{color:var(--crit)}
+.card ul{margin:.4rem 0 0; padding-left:1.05rem; font-size:.9rem; color:var(--ink-2); font-family:"IBM Plex Serif",serif}
+.card li{margin-bottom:.35rem}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="masthead">
+    <p class="kicker">A trend-following system, built from first principles</p>
+    <h1>The Hardiest<br>Method</h1>
+    <p class="sub">Hite's conviction was that markets are inefficient — that a method tilting the odds even slightly is enough to win, provided you survive to keep using it. He wasn't looking for the optimum method; he was looking for the <em>hardiest</em> one. This is where the gaps are, how to read them, and how to size them so you're still here for the next one.</p>
+    <div class="stamp">
+      <span>Working document · v2</span>
+      <span>Data: 24–25 Aug 2026</span>
+      <span>Base unit: $10,000</span>
+      <span>Educational — not financial advice</span>
+    </div>
+  </div>
+</header>
+
+<div class="switch">
+  <div class="in">
+    <div class="seg" role="tablist" aria-label="View">
+      <button id="tab-method" role="tab" aria-selected="true" aria-controls="view-method">The method</button>
+      <button id="tab-drills" role="tab" aria-selected="false" aria-controls="view-drills">Gate drills</button>
+    </div>
+    <span class="hint" id="switchhint">16 parts · the full reference</span>
+  </div>
+</div>
+
+<div id="view-method" role="tabpanel" aria-labelledby="tab-method">
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#tape"><span>01</span>The tape today</a></li>
+    <li><a href="#hite"><span>02</span>What Hite actually said</a></li>
+    <li><a href="#edge"><span>03</span>Where the money comes from</a></li>
+    <li><a href="#read"><span>04</span>How to read an asset class</a></li>
+    <li><a href="#crypto"><span>05</span>Crypto and memecoins</a></li>
+    <li><a href="#risk"><span>06</span>Risk by asset class</a></li>
+    <li><a href="#bets"><span>07</span>How many bets you have</a></li>
+    <li><a href="#system"><span>08</span>The system</a></li>
+    <li><a href="#calc"><span>09</span>Sizing calculator</a></li>
+    <li><a href="#reality"><span>10</span>What the math promises</a></li>
+    <li><a href="#compound"><span>11</span>What actually compounds</a></li>
+    <li><a href="#delta"><span>12</span>The Greeks</a></li>
+    <li><a href="#next"><span>13</span>First 90 days</a></li>
+    <li><a href="#equation"><span>14</span>The equation</a></li>
+    <li><a href="#maths"><span>15</span>The maths that counts</a></li>
+    <li><a href="#pipeline"><span>16</span>Nine stages, nine gates</a></li>
+  </ol>
+</nav>
+
+<div class="wrap">
+
+<!-- ===================== 01 ===================== -->
+<section id="tape">
+  <div class="sechead"><span class="part">PART 01</span><h2>The tape you're starting on</h2></div>
+  <p class="lede">A system is only real once it meets a specific market on a specific day. Here is what the instruments read as of 24–25 August 2026 — the conditions your first live trades will be born into.</p>
+
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="card">
+      <h3>S&amp;P 500 <span class="pill calm">Calm</span></h3>
+      <span class="big">7,677</span>
+      <p class="note">VIX at <strong>15.85</strong> — near its 2026 low. Index-level calm, which is not the same as calm underneath it.</p>
+    </div>
+    <div class="card">
+      <h3>Bitcoin <span class="pill live">Breakout</span></h3>
+      <span class="big">78,511</span>
+      <p class="note"><span class="delta up">+28% in 8 days</span>, +38% off the $57,700 low on 1 July. Rejected at the 50-week average near $81,085.</p>
+    </div>
+    <div class="card">
+      <h3>Gold <span class="pill hot">Repairing</span></h3>
+      <span class="big">4,638</span>
+      <p class="note"><span class="delta up">+14.4% in a month</span>, still <span class="delta down">−17%</span> below the 29 Jan peak of $5,597. Vol index at 28.3.</p>
+    </div>
+    <div class="card">
+      <h3>US 10-year <span class="pill hot">Elevated</span></h3>
+      <span class="big">4.70%</span>
+      <p class="note">A 4.7% risk-free rate is the hurdle every trade you take has to clear before it has done anything for you.</p>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>Three of those four cards contain a lesson you paid for in someone else's money.</p>
+    <p><strong>Gold.</strong> On 29 January 2026 gold printed roughly $5,595 an ounce, then fell below $5,000 intraday the next session — its steepest single-day drop since 1983. From that high it eventually lost about 30%; silver lost 54%. Anyone holding leveraged gold "because the fundamentals are obvious" found out that fundamentals do not liquidate positions — margin clerks do. Anyone holding a trailing stop was out near the top with most of the trend banked.</p>
+    <p><strong>Bitcoin.</strong> Three weeks ago its implied volatility index had collapsed to 35 from a 2026 high of 90, and the commentary was that nothing was happening. Then it went up 28% in eight days. Compressed volatility is not safety; it is a coiled spring with no directional information attached. This is the single cleanest illustration of your own note — <em>prices move first, fundamentals come second</em> — that the year has produced.</p>
+    <p><strong>Equities.</strong> VIX near a yearly low while the Nasdaq's own vol index sits at 22.7 and emerging-market vol at 27 tells you the index is being held still by offsetting components, not by an absence of risk. Index calm plus single-stock churn is a regime, and regimes end.</p>
+  </div>
+
+  <div class="callout">
+    <h3>Your benchmark, and why it's good news</h3>
+    <p>The SG Trend Index — the benchmark for exactly the strategy you're building, run by the largest professional trend followers alive — was <strong>+7.49% year-to-date</strong> through July 2026, and its worst drawdown since 2000 is <strong>20.61%</strong>. Read that properly: a mechanical, publishable, rules-based strategy has produced positive returns across twenty-six years, three crashes and two rate regimes, with a worst case you can know in advance. That is a working edge with a measured downside — the rarest thing in this business. Your job isn't to beat it by inventing something cleverer. It's to capture most of it, at a size you can hold, and let the two structural advantages you have over Winton — being small, and being awake in Asia — do the rest.</p>
+  </div>
+</section>
+
+<!-- ===================== 02 ===================== -->
+<section id="hite">
+  <div class="sechead"><span class="part">PART 02</span><h2>What Hite actually said</h2></div>
+  <p class="lede">Hite's philosophy has two elements, and most people only quote the second. The first is the reason to be here at all.</p>
+
+  <div class="callout" style="margin:0 0 26px; border-color:var(--accent)">
+    <h3>Element one — the markets are inefficient</h3>
+    <p style="color:var(--ink)">Schwager's summary is unambiguous: <em>"contrary to the opinion of many academics, Hite is firmly convinced that the markets are inefficient. This means that if you can develop a method that places the odds in your favor — and it doesn't have to be by very much — you can win."</em> That is the premise the entire enterprise rests on. Gaps exist. Spreads exist. They can be captured by someone with a method. Element two — respect for risk — is not a counterargument to that; it is what keeps you solvent long enough to keep collecting.</p>
+  </div>
+
+  <p class="lede" style="margin-top:0">The second element is four mechanical rules. The rules are the system. The ideas are why you'll be able to keep following it.</p>
+
+  <blockquote>
+    It is incredible how rich you can get by not being perfect. We are not looking for the optimum method; we are looking for the hardiest method.
+    <cite>Larry Hite — Market Wizards, loc. 2,703</cite>
+  </blockquote>
+
+  <div class="prose">
+    <p>This is the sentence to build everything on. A perfect system is one fitted to a past that will not repeat — Schwager's own bracketed note on that page defines optimization as testing many variations and picking the best performer, and warns that the link between past and future performance is "often a very rough one." A hardy system is one that survives being wrong roughly six times out of ten and still compounds. You are not searching for the right answer. You are searching for the answer that doesn't break.</p>
+  </div>
+
+  <div class="grid g2" style="margin:26px 0 8px">
+    <div class="card">
+      <h3>Principle 1 — Direction</h3>
+      <p class="note" style="color:var(--ink)">Never trade counter to the market trend. No exceptions, and always follow the system.</p>
+      <p class="note" style="margin-top:8px">Hite's friend — a brilliant arbitrageur with a palatial estate — refused one sell signal in gold, went long instead, and lost the house. His system would have made a fortune on that trade.</p>
+    </div>
+    <div class="card">
+      <h3>Principle 2 — Size</h3>
+      <p class="note" style="color:var(--ink)">Maximum risk on any single trade is 1% of total equity.</p>
+      <p class="note" style="margin-top:8px">Not 1% of the position. 1% of everything you have. This is the rule that converts "if you lose all your chips you can't bet" from a slogan into arithmetic.</p>
+    </div>
+    <div class="card">
+      <h3>Principle 3 — Diversification</h3>
+      <p class="note" style="color:var(--ink)">Diversify to an extreme — many low-correlation systems, ~60 markets across six countries and every market group.</p>
+      <p class="note" style="margin-top:8px">Note what he diversifies: not just markets, but <em>systems</em>, selected partly for their lack of correlation with each other.</p>
+    </div>
+    <div class="card">
+      <h3>Principle 4 — Volatility</h3>
+      <p class="note" style="color:var(--ink)">Track volatility continuously; liquidate or suspend any market where risk/reward exceeds defined limits.</p>
+      <p class="note" style="margin-top:8px">The rule almost every retail trader skips. Position size must shrink as a market gets wilder, automatically, without a decision being made.</p>
+    </div>
+  </div>
+
+  <div class="prose" style="margin-top:26px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">And the two ideas</h3>
+    <p><strong>Price is the first fundamental.</strong> Hite's two favourite indicators are both price-versus-expectation, not price alone: a market that fails to move on news that should move it, and a market making a historic high. When the Iran/Iraq war hit the wires and gold could only manage $1, he read that as a market with no buyers left and sold it. That is your line — <em>prices move first, fundamentals come second</em> — stated as a testable rule rather than a belief.</p>
+    <p><strong>Respect for risk is not just about trading.</strong> The line you highlighted is the one that generalises. His firm's president held a losing option position against advice, got bailed out by the market, and Hite immediately started looking for another job — because a man who walks through a minefield and survives has learned the wrong lesson. Getting away with it is the most expensive outcome available, in trading and in every other decision you'll make with money.</p>
+  </div>
+</section>
+
+<!-- ===================== 03 ===================== -->
+<section id="edge">
+  <div class="sechead"><span class="part">PART 03</span><h2>Where the money actually comes from</h2></div>
+  <p class="lede">A spread survives only when something specific stops it being closed. So don't hunt for gaps — hunt for the reason nobody has arbitraged one away. There are five such reasons, they're all checkable, and several of them are open to you precisely <em>because</em> you're small and in Jakarta.</p>
+
+  <ol class="rules" style="margin-top:24px">
+    <li>
+      <div>
+        <h3>Mandate walls — big money is not allowed in</h3>
+        <p>The cleanest live example on the board. On 7 August 2026 the annualised basis on August bitcoin futures was <strong>7.89%</strong>, against a two-year Treasury yield of <strong>4.19%</strong>. Buy spot, sell the future, hold to convergence: a market-neutral position earning roughly 370bp over the risk-free rate. September was 6.25%, December 5.69%. That spread persists not because nobody has noticed but because custody rules, balance-sheet charges and mandate language keep most regulated capital out of the venue. You have no such constraint. <em>This is the trade you are currently on the wrong side of</em> — every funding payment you make as a long is somebody else's yield.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Size floors — the opportunity is too small to be worth their time</h3>
+        <p>A fund running $500m cannot deploy meaningfully into a trade with $3m of capacity; the position wouldn't move their return and the operational cost exceeds the profit. At $10–25k, an enormous set of trades is large enough to matter to you and too small to matter to anyone who could compete it away. Smallness is a genuine structural advantage and it is the one that erodes as you succeed — so use it while you have it.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Operating cost — nobody is staffing that desk</h3>
+        <p>Edges that require someone awake during the Asia session, or watching a market with poor data coverage, survive because paying a person to sit there costs more than the edge yields. You are already awake and already there. This is not a romantic advantage — it's an accounting one.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Forced flow — somebody must trade at a bad price on a schedule</h3>
+        <p>Index rebalances, ETF creations, option expiries, margin liquidation cascades. These are participants transacting because they have to, not because they want to, and the price they accept is worse than fair. A dated example from this very week: the <strong>$6.4bn bitcoin options expiry</strong> on Friday, with max pain at $68,000 while spot sat near $79,000 — a large, known, calendarised flow. Forced flow is the most reliably recurring inefficiency in markets because the calendar publishes it in advance.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Convexity underpricing — people systematically discount rare large moves</h3>
+        <p>This is the deepest one, and it is <em>why trend following has worked for four decades</em>. Human beings under-price the tails: they sell the far option too cheap, they exit the winner too early, they don't believe a market can keep going. Trend following is a machine for collecting that mispricing. And it is measurable — <strong>VIX at 15.85 sits near its 2026 low</strong>, which means the market's price for optionality is currently cheap. Cheap convexity is a condition you can wait for.</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="callout" style="margin-top:26px; border-color:var(--accent)">
+    <h3>The test this gives you</h3>
+    <p style="color:var(--ink)">Before any position, name which of the five is your reason. <em>Why has this not been arbitraged away?</em> If you can name it — the venue is walled off, the size is beneath them, the hour is unstaffed, the flow is forced, the tail is underpriced — you have a candidate edge worth testing. If you cannot name one, you have a hope wearing a chart. This isn't a filter designed to stop you trading. It's a search you can actually run, and it converts "find an edge" from a mystery into a checklist.</p>
+  </div>
+
+  <blockquote style="margin-top:34px">
+    If you don't bet, you can't win.
+    <cite>Larry Hite — Market Wizards, loc. 2,725</cite>
+  </blockquote>
+
+  <div class="prose">
+    <p>Which is the half of his two rules that gets forgotten, and it comes <em>first</em>. Read the pair the way he wrote it and the logic inverts: the 1% rule is not a brake, it's a licence. <strong>If you can only survive one mistake, you can only make one bet.</strong> At 1% risk you can be wrong ten times running and still be hunting on the eleventh — and since the eleventh is where the trend usually is, the risk limit is what buys you the winner. Hite diversified across sixty markets not to be timid but to be <em>greedy</em>: he wanted exposure to every trend that showed up anywhere, rather than betting his year on picking the right one in advance.</p>
+    <p>Everything from Part 06 onward is engineering in service of that. The limits exist so you can keep taking shots.</p>
+  </div>
+</section>
+
+<!-- ===================== 04 ===================== -->
+<section id="read">
+  <div class="sechead"><span class="part">PART 04</span><h2>How to read an asset class</h2></div>
+  <p class="lede">Six questions, asked in the same order, of anything you're thinking about. The point is that they're answerable — every one resolves to a number or a yes, so a view becomes something you build rather than something you have.</p>
+
+  <ol class="rules" style="margin-top:24px">
+    <li><div><h3>What regime is it in?</h3><p>Price above or below the <code>200-day average</code>, and is that average rising or falling over 20 days? Two bits of information, four states. Trend systems only work in two of them. Compute it, don't eyeball it.</p></div></li>
+    <li><div><h3>Does holding it pay me or charge me?</h3><p>Equities pay you earnings and dividends. Treasuries pay you <strong>4.70%</strong>. Gold pays nothing and costs storage. A long perp <em>charges</em> you funding — and the short side collects it. Carry is the return you get for doing nothing, and it compounds silently in both directions.</p></div></li>
+    <li><div><h3>Where is its volatility versus its own history?</h3><p>Not versus other assets — versus itself. A 28 on gold's vol index means something completely different from a 28 on Bitcoin's. Cheap vol relative to its own range means optionality is on sale and stops are tight; expensive vol means the opposite. This is the single most useful and least used number in retail trading.</p></div></li>
+    <li><div><h3>What does it correlate with that I already own?</h3><p>A new position that moves with your existing book is not a new bet, it's a bigger version of an old one. Check it against what you hold before you check anything else about it.</p></div></li>
+    <li><div><h3>Which of the five gaps applies?</h3><p>Mandate wall, size floor, unstaffed hour, forced flow, underpriced tail. Name one, from Part 03. This is the question that separates a trade from a guess.</p></div></li>
+    <li><div><h3>Only now — how much?</h3><p>Take the answer to question three into the sizing math in Part 09. Note the order: size is the <em>last</em> question, never the first. Conviction never enters.</p></div></li>
+  </ol>
+
+  <div class="tablewrap" style="margin:26px 0 12px">
+    <table>
+      <caption>The six questions run across the board — 24–25 August 2026</caption>
+      <thead><tr><th>Asset class</th><th class="r">Vol now</th><th>Vol vs its own range</th><th>Carry to hold</th><th>Gap available</th></tr></thead>
+      <tbody>
+        <tr><td class="name">S&amp;P 500</td><td class="n">15.9</td><td><span class="pill calm">Cheap</span> near 2026 low</td><td>Positive — earnings, dividends</td><td>Underpriced tail: options are on sale</td></tr>
+        <tr><td class="name">Nasdaq 100</td><td class="n">22.7</td><td><span class="pill live">Mid</span> above index vol</td><td>Positive, thinner yield</td><td>Dispersion — index calm, components not</td></tr>
+        <tr><td class="name">Gold</td><td class="n">28.3</td><td><span class="pill hot">Elevated</span> post-crash</td><td>Negative — storage, no yield</td><td>Forced flow after a 30% drawdown</td></tr>
+        <tr><td class="name">Crude oil</td><td class="n">46.7</td><td><span class="pill extreme">High</span></td><td>Curve-dependent</td><td>Unstaffed hours; roll mechanics</td></tr>
+        <tr><td class="name">US 10-year</td><td class="n">~7</td><td><span class="pill live">Mid</span></td><td><strong>+4.70%</strong> paid to you</td><td>The hurdle everything else must clear</td></tr>
+        <tr><td class="name">EM equities</td><td class="n">27.1</td><td><span class="pill hot">Elevated</span></td><td>Positive, FX-exposed</td><td>Unstaffed hours — your timezone</td></tr>
+        <tr><td class="name">Bitcoin</td><td class="n">~45</td><td><span class="pill live">Mid</span> of a 35–90 range</td><td>Negative long / <strong>positive short</strong></td><td>Mandate wall — basis at 7.89%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sm" style="max-width:70ch">Vol figures are the Cboe indices and Deribit DVOL described in Part 06. Regime and correlation are deliberately absent — those you compute daily from your own data, and they're the two that change fastest. The "gap available" column is a hypothesis to test, not a finding.</p>
+
+  <div class="callout" style="border-color:var(--accent)">
+    <h3>What that table is actually telling you right now</h3>
+    <p style="color:var(--ink)">Three things stand out and all three are opportunities rather than warnings. Equity optionality is <strong>cheap</strong> — the market is charging little for convexity at a moment when index calm sits over unusually active components. Bitcoin's carry is <strong>positive on the side you're not on</strong> — the basis trade pays 370bp over Treasuries to a position with no directional exposure. And the 10-year at 4.70% is a genuinely high hurdle, which is useful information rather than bad news: it tells you exactly how good a trade has to be before it's worth doing at all.</p>
+  </div>
+</section>
+
+<!-- ===================== 05 ===================== -->
+<section id="crypto">
+  <div class="sechead"><span class="part">PART 05</span><h2>Reading crypto, and reading memecoins</h2></div>
+  <p class="lede">Your asset class, run through the six questions — and it deserves its own part, because crypto publishes data no equity market does. Positioning, leverage and the cost of carry are all visible in real time. That's not a hazard; it's an instrument panel most asset classes don't come with.</p>
+
+  <div class="prose">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">First: it isn't one asset class</h3>
+    <p>Analysing all of it with one framework is the first mistake, because the segments have genuinely different drivers:</p>
+  </div>
+
+  <div class="grid g3" style="margin:20px 0 26px">
+    <div class="card">
+      <h3>Bitcoin — a macro asset</h3>
+      <p class="note">Driven by liquidity, rates and ETF flow. Increasingly behaves like a high-beta risk asset with a fixed supply schedule. Analysed with flow and positioning data.</p>
+    </div>
+    <div class="card">
+      <h3>Majors — platform beta</h3>
+      <p class="note">Ether and the large L1s. Correlated to BTC but with real dispersion, and driven partly by usage. Analysed as tech beta plus network activity.</p>
+    </div>
+    <div class="card">
+      <h3>Cashflow tokens</h3>
+      <p class="note">Protocols with actual fee revenue. These are the only crypto assets you can value the way you were trained to value anything at Siloam — revenue, margin, multiple.</p>
+    </div>
+    <div class="card">
+      <h3>The carry layer</h3>
+      <p class="note">Stablecoins, basis, funding, staking yield. No directional view required. This is where crypto most resembles a money market, and where the 7.89% basis lives.</p>
+    </div>
+    <div class="card">
+      <h3>Memecoins — pure reflexivity</h3>
+      <p class="note">No cashflow, no usage, no valuation anchor. The asset <em>is</em> attention. Analysable, but with a completely different toolkit — see below.</p>
+    </div>
+    <div class="card">
+      <h3>Why it matters</h3>
+      <p class="note">A DOGE position and a DeFi-revenue position are not both "crypto exposure." They fail for different reasons, on different days, and belong in different sleeves.</p>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">The instrument panel — six readings equities don't give you</h3>
+    <p>An equity investor guesses at positioning. In crypto it's published. These are live figures as of 24–25 August 2026:</p>
+  </div>
+
+  <div class="tablewrap" style="margin:20px 0 12px">
+    <table>
+      <caption>Crypto-native readings and what each one tells you</caption>
+      <thead><tr><th>Reading</th><th class="r">Now</th><th>What it measures</th><th>Current signal</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Funding rate</td><td class="n">&lt;10% ann.</td><td>Cost to hold a long; crowding in the derivative</td><td><span class="pill calm">Moderate</span> not euphoric</td></tr>
+        <tr><td class="name">Open interest</td><td class="n">587,584 BTC</td><td>Total leverage in the system</td><td><span class="pill calm">5-month low</span> from 645,760 on 14 Aug</td></tr>
+        <tr><td class="name">Basis, Aug/Sep/Dec</td><td class="n">7.89 / 6.25 / 5.69%</td><td>Price of time; demand for leverage</td><td><span class="pill live">Downward sloping</span> near-term demand</td></tr>
+        <tr><td class="name">Implied vol (DVOL)</td><td class="n">~45</td><td>Price of optionality</td><td><span class="pill live">Mid-range</span> of a 35–90 year</td></tr>
+        <tr><td class="name">ETF flows</td><td class="n">+$1.9bn/wk</td><td>Institutional demand channel</td><td><span class="pill calm">Assets $98.6bn</span> from $78.7bn a week earlier</td></tr>
+        <tr><td class="name">Collateral mix</td><td class="n">11% crypto-margined</td><td>Fragility of the leverage stack</td><td><span class="pill calm">All-time low</span> ~52,000 BTC</td></tr>
+        <tr><td class="name">Exchange inflows</td><td class="n">Rising</td><td>Coins moving to venues to be sold</td><td><span class="pill hot">Supply pressure</span> with high unrealised profit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose" style="margin-top:26px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">The one combination worth memorising</h3>
+    <p>Price alone is ambiguous. Price <em>together with</em> open interest is not — and this 2×2 is the highest-value thing in crypto analysis relative to how simple it is:</p>
+  </div>
+
+  <div class="grid g4" style="margin:20px 0 12px">
+    <div class="card" style="border-left:3px solid var(--warn); border-radius:0 6px 6px 0">
+      <h3>Price ↑ &nbsp; OI ↑</h3>
+      <p class="note">New leveraged longs piling in. The move is real but the structure is fragile — this is what a liquidation cascade is built out of.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent); border-radius:0 6px 6px 0">
+      <h3>Price ↑ &nbsp; OI ↓</h3>
+      <p class="note" style="color:var(--ink)"><strong>What just happened.</strong> Shorts closing, not longs opening. Leverage is leaving as price rises — a more durable advance with less fuel for a reversal.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--warn); border-radius:0 6px 6px 0">
+      <h3>Price ↓ &nbsp; OI ↑</h3>
+      <p class="note">New shorts building. Bearish in the moment, but it's also loading the spring for the squeeze that fires later.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--ink-3); border-radius:0 6px 6px 0">
+      <h3>Price ↓ &nbsp; OI ↓</h3>
+      <p class="note">Longs being liquidated out. Capitulation — painful, and historically where the leverage flush finishes.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="border-color:var(--accent); margin-top:24px">
+    <h3>What the panel says about right now — both sides</h3>
+    <p style="color:var(--ink)"><strong>Constructive:</strong> BTC ran from roughly $62,000 to $80,500 while open interest <em>fell</em> to a five-month low and funding stayed under 10% annualised. That is a rally powered by shorts covering rather than fresh leverage — billions in short positions liquidated on the way up. Crypto-margined open interest is at an all-time low of 11%, meaning the collateral behind the market is mostly cash, which makes the whole structure less prone to cascade. And ETF assets went from $78.7bn to $98.6bn in a week. <strong>Cautionary:</strong> unrealised profits are high and exchange inflows are rising — coins moving to venues are usually coins about to be sold — and Friday's $6.4bn expiry has max pain down at $68,000. <strong>The level that settles it:</strong> price was rejected at the 50-week average near $81,085; the 365-day average around $83,000 is the line that would confirm a new regime. That is a testable, dated, falsifiable statement, which is what an analysis is supposed to produce.</p>
+  </div>
+
+  <div class="prose" style="margin-top:32px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">Memecoins — the analysis, not the sermon</h3>
+    <p>Start by granting the thing that's true: <strong>the inefficiency here is real.</strong> Attention is genuinely mispriced, reflexivity is a real mechanism, and a coin that goes up because it's going up is a self-reinforcing loop that can be ridden. Anyone who tells you there's no money in this is contradicted by the data. Pump.fun's profitable-wallet share rose from 30.1% in June 2025 to <strong>73.3%</strong> by April 2026.</p>
+    <p>But look at what the same dataset says next: about 65% of those profitable traders made between $1 and $500. A lot of people winning small amounts and a few winning everything is the signature of a lottery — and the reason isn't that the attention edge is fake. It's that <strong>the edge is not "will it go up." It's two entirely different questions: am I early to attention, and can I get out at size.</strong> The second one is the binding constraint, and it's the one nobody measures.</p>
+    <p>So the analysis is a different toolkit, and it's a real one:</p>
+  </div>
+
+  <ol class="rules" style="margin-top:22px">
+    <li><div><h3>Liquidity depth against <em>your</em> size</h3><p>The only question that decides whether a paper gain becomes money. Look at pool depth, then model the slippage on selling your whole position at once — not a tenth of it. If exiting your intended size moves the price more than a few percent, your real position size is whatever you <em>can</em> exit, not what you can buy.</p></div></li>
+    <li><div><h3>Holder concentration</h3><p>Top-10 wallet share. If insiders hold 40% of supply, the chart is a marketing document and you are the exit liquidity. This is checkable on-chain in about ninety seconds and it filters out most of the tail.</p></div></li>
+    <li><div><h3>Age, because the hazard rate falls</h3><p>97% of memecoins die and average lifespan is around a year — but that's a population average, and survival is informative. <strong>DOGE at $14.28bn is 47% of the entire $30.6bn category</strong> and is functionally a liquid large-cap. A pump.fun launch with a 0.26% graduation rate is a different asset with a different distribution. Never reason about one using statistics from the other.</p></div></li>
+    <li><div><h3>Attention velocity, not attention level</h3><p>The driver is the <em>rate of change</em> of new holders, volume and mentions — the second derivative, not the level. By the time attention is high it's already priced; the edge is entirely in being early, which means you're measuring acceleration.</p></div></li>
+    <li><div><h3>Float and unlocks</h3><p>What percentage of supply is actually circulating, and what unlocks when. A token with 8% float and a cliff next month is a supply event with a chart attached.</p></div></li>
+  </ol>
+
+  <div class="callout" style="margin-top:26px">
+    <h3>How to hold it without letting it eat the book</h3>
+    <p>Ring-fence it. A separate account, funded once with an amount already mentally written off — <strong>1–2% of net worth, not of the trading account</strong> — never topped up from the trend book. Stops don't work here (the moves gap, liquidity vanishes, and a rug isn't a price move you can be stopped out of), so the premium-style rule from Part 12 applies instead: <em>the amount you put in is the amount you're risking, decided at entry.</em> Sized that way it's a legitimate convex bet with a capped downside. Mixed into the trend book, it eventually eats the trend book.</p>
+  </div>
+</section>
+
+<!-- ===================== 06 ===================== -->
+<section id="risk">
+  <div class="sechead"><span class="part">PART 06</span><h2>What 1% actually costs, by asset class</h2></div>
+  <p class="lede">Principle 2 and Principle 4 combine into one calculation. Volatility sets how far away your stop must sit; the stop distance sets how much you can own. Here is that calculation run across everything you can reach, using live option-implied volatility as of 24 August 2026.</p>
+
+  <div class="prose">
+    <p>The chain is short. Annualised volatility ÷ √252 gives a typical daily move. A day's high-to-low range runs about 1.6× that daily move. A stop that isn't hit by ordinary noise sits at least two of those ranges away. And then: <strong>position size = $100 of risk ÷ stop distance</strong>. That's it — the whole of professional position sizing in one line.</p>
+  </div>
+
+  <div class="tablewrap" style="margin:26px 0 12px">
+    <table>
+      <caption>Position size per $100 of risk — a 1% risk unit on a $10,000 account</caption>
+      <thead>
+        <tr>
+          <th>Market</th>
+          <th class="r">Implied vol</th>
+          <th class="r">Daily move</th>
+          <th class="r">Typical range</th>
+          <th class="r">Stop distance</th>
+          <th class="r">Max position</th>
+          <th class="barcell">Vs. account</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="name">US 10-yr Treasury <span class="sm">TLT</span></td><td class="n">7.0%</td><td class="n">0.44%</td><td class="n">0.70%</td><td class="n">1.41%</td><td class="n">$7,105</td><td class="barcell"><div class="barrow"><span class="tick">0.71×</span><div class="bartrack"><span class="bar" style="width:85%"></span></div></div></td></tr>
+        <tr><td class="name">USD/IDR <span class="sm">est.</span></td><td class="n">6.0%</td><td class="n">0.38%</td><td class="n">0.60%</td><td class="n">1.21%</td><td class="n">$8,289</td><td class="barcell"><div class="barrow"><span class="tick">0.83×</span><div class="bartrack"><span class="bar" style="width:100%"></span></div></div></td></tr>
+        <tr><td class="name">S&amp;P 500 <span class="sm">SPY</span></td><td class="n">15.9%</td><td class="n">1.00%</td><td class="n">1.59%</td><td class="n">3.19%</td><td class="n">$3,138</td><td class="barcell"><div class="barrow"><span class="tick">0.31×</span><div class="bartrack"><span class="bar" style="width:38%"></span></div></div></td></tr>
+        <tr><td class="name">Russell 2000 <span class="sm">IWM</span></td><td class="n">19.7%</td><td class="n">1.24%</td><td class="n">1.98%</td><td class="n">3.95%</td><td class="n">$2,530</td><td class="barcell"><div class="barrow"><span class="tick">0.25×</span><div class="bartrack"><span class="bar" style="width:31%"></span></div></div></td></tr>
+        <tr><td class="name">Nasdaq 100 <span class="sm">QQQ</span></td><td class="n">22.7%</td><td class="n">1.43%</td><td class="n">2.28%</td><td class="n">4.56%</td><td class="n">$2,192</td><td class="barcell"><div class="barrow"><span class="tick">0.22×</span><div class="bartrack"><span class="bar" style="width:26%"></span></div></div></td></tr>
+        <tr><td class="name">EM equities <span class="sm">EEM</span></td><td class="n">27.1%</td><td class="n">1.70%</td><td class="n">2.72%</td><td class="n">5.44%</td><td class="n">$1,839</td><td class="barcell"><div class="barrow"><span class="tick">0.18×</span><div class="bartrack"><span class="bar" style="width:22%"></span></div></div></td></tr>
+        <tr><td class="name">Gold <span class="sm">GLD / XAU</span></td><td class="n">28.3%</td><td class="n">1.78%</td><td class="n">2.84%</td><td class="n">5.69%</td><td class="n">$1,759</td><td class="barcell"><div class="barrow"><span class="tick">0.18×</span><div class="bartrack"><span class="bar" style="width:21%"></span></div></div></td></tr>
+        <tr><td class="name">Bitcoin</td><td class="n">45.0%</td><td class="n">2.83%</td><td class="n">4.52%</td><td class="n">9.05%</td><td class="n">$1,105</td><td class="barcell"><div class="barrow"><span class="tick">0.11×</span><div class="bartrack"><span class="bar" style="width:13%"></span></div></div></td></tr>
+        <tr><td class="name">Crude oil <span class="sm">USO / WTI</span></td><td class="n">46.7%</td><td class="n">2.94%</td><td class="n">4.70%</td><td class="n">9.40%</td><td class="n">$1,064</td><td class="barcell"><div class="barrow"><span class="tick">0.11×</span><div class="bartrack"><span class="bar" style="width:13%"></span></div></div></td></tr>
+        <tr><td class="name">Ether</td><td class="n">60.0%</td><td class="n">3.78%</td><td class="n">6.03%</td><td class="n">12.06%</td><td class="n">$829</td><td class="barcell"><div class="barrow"><span class="tick">0.08×</span><div class="bartrack"><span class="bar" style="width:10%"></span></div></div></td></tr>
+        <tr><td class="name">DOGE <span class="sm">large-cap meme</span></td><td class="n">100%</td><td class="n">6.30%</td><td class="n">10.05%</td><td class="n">20.11%</td><td class="n">$497</td><td class="barcell"><div class="barrow"><span class="tick">0.05×</span><div class="bartrack"><span class="bar" style="width:6%"></span></div></div></td></tr>
+        <tr><td class="name">Fresh launch <span class="sm">meme, floor estimate</span></td><td class="n">300%</td><td class="n">18.90%</td><td class="n">30.16%</td><td class="n">60.32%</td><td class="n">$166</td><td class="barcell"><div class="barrow"><span class="tick">0.02×</span><div class="bartrack"><span class="bar" style="width:2%"></span></div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sm" style="max-width:70ch">Implied vol from Cboe indices on 24 Aug 2026 (VIX, VXN, RVX, VXEEM, GVZ, OVX); Bitcoin from Deribit DVOL (≈35 on 7 Aug, up roughly 30% over the week to 25 Aug). Ether, IDR, Treasuries and meme coins are estimates, marked as such. Daily move = IV ÷ √252. Typical range uses the Parkinson relation, E[high−low] ≈ 1.596σ. Stop = 2 ranges. These are planning numbers, not quotes.</p>
+
+  <div class="callout warn" style="margin-top:22px">
+    <h3>What these numbers are, and what they are not</h3>
+    <p>Every figure above comes from an <em>implied</em> volatility index — what options traders are charging today for expected movement. That is not the input a trend follower actually uses. The real input is <strong>ATR(20) computed on the instrument itself</strong>, off your own chart, looking backwards at what the market has actually done. The two differ: implied usually sits above realised, because sellers charge a premium for bearing risk. So treat this table as a planning map of relative volatility across asset classes — gold moves about twice as much as the S&amp;P, Ether about four times — and compute the actual stop distance from your own ATR before you size anything.</p>
+  </div>
+
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card">
+      <h3>The counter-intuitive result</h3>
+      <p class="note">A "safe" bond position is the <strong>largest</strong> line in your account and a Bitcoin position is one of the smallest. Risk is not what you own — it's what you own multiplied by how far it can travel before you're out.</p>
+    </div>
+    <div class="card">
+      <h3>Where leverage is actually required</h3>
+      <p class="note">Nothing here needs leverage at 1% risk. Every position is a fraction of the account. If a size you want requires margin, the honest reading is that you're taking more than 1%.</p>
+    </div>
+    <div class="card">
+      <h3>The meme coin line</h3>
+      <p class="note">At 1% risk with an honest stop, a new launch is a <strong>$166</strong> position on a $10,000 account. If that number feels absurdly small, that is the volatility telling you the truth.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 07 ===================== -->
+<section id="bets">
+  <div class="sechead"><span class="part">PART 07</span><h2>You can't run Hite's sixty markets — and you wouldn't want to</h2></div>
+  <p class="lede">Two separate constraints get confused here. One is about the smallest thing you can buy. The other is about how many genuinely different bets exist. Only the second one is binding for you.</p>
+
+  <div class="prose">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">Constraint one — futures have a floor, and it's above your risk budget</h3>
+    <p>Hite's sixty markets were futures. Futures come in fixed contract sizes and you cannot buy a fraction of one. These are CME's <em>micro</em> contracts — the smallest listed size that exists:</p>
+  </div>
+
+  <div class="tablewrap" style="margin:20px 0 12px">
+    <table>
+      <caption>Smallest contract available, and what one costs you in risk</caption>
+      <thead><tr><th>Contract</th><th class="r">Notional</th><th class="r">Risk at 2×ATR stop</th><th class="r">% of a $10k account</th><th class="r">Account needed at 1%</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Micro Nasdaq <span class="sm">MNQ</span></td><td class="n">$58,418</td><td class="n">$2,665</td><td class="n">26.7%</td><td class="n">$266,500</td></tr>
+        <tr><td class="name">Micro Gold <span class="sm">MGC</span></td><td class="n">$46,382</td><td class="n">$2,638</td><td class="n">26.4%</td><td class="n">$263,800</td></tr>
+        <tr><td class="name">Micro S&amp;P 500 <span class="sm">MES</span></td><td class="n">$38,386</td><td class="n">$1,223</td><td class="n">12.2%</td><td class="n">$122,300</td></tr>
+        <tr><td class="name">Micro WTI Crude <span class="sm">MCL</span></td><td class="n">$8,648</td><td class="n">$813</td><td class="n">8.1%</td><td class="n">$81,300</td></tr>
+        <tr><td class="name">Micro Bitcoin <span class="sm">MBT</span></td><td class="n">$7,851</td><td class="n">$710</td><td class="n">7.1%</td><td class="n">$71,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>One micro Nasdaq contract puts 27% of a $10,000 account at risk. Not 1% — twenty-seven. Hite's own rule isn't even <em>expressible</em> in futures until you have low six figures, and Mint ran hundreds of millions.</p>
+    <p>But this constraint doesn't bind on you, because you don't trade futures. <strong>Crypto perps have no minimum contract size and fractional ETF shares have no minimum either.</strong> Bybit's floor on BTCUSDT is around 0.001 BTC — under $80. That is precisely why Part 08 is built from perps and spot ETFs rather than futures: both are divisible down to any size you like, so a $1,105 position is executable rather than theoretical. Perps carry a second advantage that matters at your timezone — they trade 24/7, so your stop is live at 3am Jakarta time, whereas a stop on SPY does nothing while New York is shut and the gap happens on the open.</p>
+  </div>
+
+  <div class="prose" style="margin-top:26px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">Constraint two — the one that actually binds</h3>
+    <p>Divisibility buys you sixty <em>tickers</em>. It cannot buy you sixty <em>bets</em>. What diversification pays for is uncorrelated risk, and that benefit saturates fast:</p>
+  </div>
+
+  <div class="tablewrap" style="margin:20px 0 12px">
+    <table>
+      <caption>Portfolio volatility as a share of a single market's volatility</caption>
+      <thead><tr><th>Markets held</th><th class="r">Genuinely diverse (ρ≈0.15)</th><th class="r">Risk cut</th><th class="r">Alt perps (ρ≈0.75)</th><th class="r">Risk cut</th></tr></thead>
+      <tbody>
+        <tr><td class="name">1</td><td class="n">100.0%</td><td class="n">—</td><td class="n">100.0%</td><td class="n">—</td></tr>
+        <tr><td class="name">3</td><td class="n">65.8%</td><td class="n">34.2%</td><td class="n">91.3%</td><td class="n">8.7%</td></tr>
+        <tr><td class="name">6</td><td class="n">54.0%</td><td class="n">46.0%</td><td class="n">89.0%</td><td class="n">11.0%</td></tr>
+        <tr><td class="name">9 <span class="sm">— Part 08</span></td><td class="n">49.4%</td><td class="n">50.6%</td><td class="n">88.2%</td><td class="n">11.8%</td></tr>
+        <tr><td class="name">20</td><td class="n">43.9%</td><td class="n">56.1%</td><td class="n">87.3%</td><td class="n">12.7%</td></tr>
+        <tr><td class="name">60 <span class="sm">— Hite's book</span></td><td class="n">40.5%</td><td class="n">59.5%</td><td class="n">86.8%</td><td class="n">13.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>Nine uncorrelated markets capture 50.6% of the available risk reduction. Sixty capture 59.5%. The extra fifty-one markets buy you nine percentage points, for six times the operating cost and six times the daily workload. Hite ran sixty because at Mint's size the marginal cost of the fifty-first market was effectively zero. At yours it is not.</p>
+  </div>
+
+  <div class="callout warn" style="margin-top:24px">
+    <h3>The number to keep</h3>
+    <p>Translate correlation into <em>independent bets</em> and the alt-coin column becomes brutal. Nine genuinely diverse markets ≈ <strong>4.1 independent bets</strong>. Sixty ≈ 6.1. But <strong>forty alt perps at ρ≈0.75 ≈ 1.3 independent bets</strong> — and nine of them is 1.29, which is to say adding thirty-one more names bought you 0.03 of a bet. Twenty alts on Bybit is not a diversified book. It is one leveraged Bitcoin position wearing twenty costumes, and it goes wrong on the same afternoon. Worse, crypto correlation isn't even stable: in calm tape it may look like 0.5–0.6, which reads as diversification, and in a drawdown it goes to 0.9+. You lose the benefit at precisely the moment you need it.</p>
+  </div>
+</section>
+
+<!-- ===================== 08 ===================== -->
+<section id="system">
+  <div class="sechead"><span class="part">PART 08</span><h2>The system, written so someone else could run it</h2></div>
+  <p class="lede">A rule you can't hand to a stranger isn't a rule, it's a mood. Every line below is checkable at the close by someone who has never met you and has no opinion about the market.</p>
+
+  <div class="prose">
+    <p>This is a medium-term, close-only trend system on daily bars. It is deliberately slow — you look once a day, after the close, and most days you do nothing. Slowness is a feature: it removes the 15-minute chart, which is where your recorded weakness lives.</p>
+  </div>
+
+  <ol class="rules" style="margin-top:24px">
+    <li>
+      <div>
+        <h3>Universe — nine markets, six uncorrelated groups</h3>
+        <p>Equity index <code>SPY</code> · Growth <code>QQQ</code> · EM <code>EEM</code> · Gold <code>GLD</code> · Silver <code>SLV</code> · Energy <code>XLE</code> · Rates <code>TLT</code> · <code>BTC</code> · <code>ETH</code>. You cannot run Hite's sixty markets, but you can run six groups that don't move together — which captures most of the diversification benefit. Never more than two open positions from one group.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Regime filter — trade only with the tide</h3>
+        <p>A long is permitted only when the close is above the <code>200-day moving average</code> and that average is higher than it was 20 days ago. A short (crypto only, where you have the instrument) mirrors it. This is Principle 1 made mechanical: no counter-trend trades, no exceptions.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Entry — the 50-day breakout</h3>
+        <p>Enter at the next open when the daily close exceeds the <code>highest close of the prior 50 trading days</code>. One entry per signal. No anticipating the breakout, no entering because it "looks ready." The close either did or didn't.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Initial stop — 2 × ATR(20), set before you enter</h3>
+        <p>Stop = entry price − <code>2 × ATR(20)</code>. It goes into the platform in the same action as the entry, never afterwards. On crypto, your existing MA28-on-4H stop is a legitimate substitute <em>only</em> if it sits further away than 2×ATR; if it's closer, use 2×ATR. Your logged failure mode is exiting before a structural level — a stop placed in advance is the cure, and it only works if it exists before the first counter-candle.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Size — solve for risk, never for conviction</h3>
+        <p><code>units = (0.01 × equity) ÷ (2 × ATR20)</code>. Conviction is not an input. If the resulting position is uncomfortably small, that is the correct amount of discomfort. Round down, always.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Volatility ceiling — Hite's fourth principle</h3>
+        <p>If <code>ATR(20) ÷ price</code> is more than 1.5× its own median over the past year, halve the position. If it's more than 2.5×, skip the market entirely until it settles. Re-check weekly and reduce open positions the same way. This is what stops a gold-in-January or an oil-at-OVX-47 from quietly becoming your largest exposure.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Exit — the 20-day low, and nothing else</h3>
+        <p>Exit at the next open when the close falls below the <code>lowest close of the prior 20 trading days</code>, or when the 2×ATR stop is hit — whichever comes first. There is no profit target. Trend following pays for the one trade in ten that runs; a target is the mechanism by which you guarantee never taking it.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Portfolio heat — 6% open, 2% per group</h3>
+        <p>Total risk across all open positions never exceeds <code>6%</code> of equity. No group carries more than <code>2%</code>. When a new signal would breach either cap, you skip it and log the skip. Correlation is the thing that turns six 1% risks into one 6% risk.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Drawdown governor — shrink automatically</h3>
+        <p>At <code>−10%</code> from your equity high, risk per trade drops to 0.5%. At <code>−15%</code>, it drops to 0.25%. At <code>−20%</code>, you stop taking new entries for one full month and review the log. The governor is automatic because the moment you need it is the moment you'll least want to apply it.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>The override rule</h3>
+        <p>There is no override. If you take a discretionary action, it gets logged in red with the reason, and it doesn't count toward the system's track record — it counts toward yours. Hite's friend was one override away from keeping the estate.</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="callout warn" style="margin-top:26px">
+    <h3>Before this goes anywhere near money</h3>
+    <p>None of these parameters are sacred — 50/20/200/2×ATR are conventional starting values, not discovered truths, and I have not backtested them for you. Run them on your own data before you fund them, and expect the honest result: something that makes money slowly with a 15–20% drawdown built in. If your test shows a smooth equity curve, you have fitted the past, which is precisely the trap Schwager flags on the page you highlighted.</p>
+  </div>
+</section>
+
+<!-- ===================== 09 ===================== -->
+<section id="calc">
+  <div class="sechead"><span class="part">PART 09</span><h2>Sizing calculator</h2></div>
+  <p class="lede">Run every trade through this before it exists. If the position it returns is smaller than the one you wanted, the position you wanted was a decision about hope, not risk.</p>
+
+  <div class="calc" style="margin-top:24px">
+    <div class="head">
+      <h3>Position size from risk</h3>
+      <span class="sm mono">units = (equity × risk%) ÷ stop distance</span>
+    </div>
+    <div class="calcbody">
+      <div class="inputs">
+        <div class="field">
+          <label for="eq">Account equity (USD)</label>
+          <input id="eq" type="number" value="10000" min="100" step="100">
+        </div>
+        <div class="field">
+          <label for="rk">Risk per trade (%)</label>
+          <input id="rk" type="number" value="1" min="0.1" max="10" step="0.05">
+        </div>
+        <div class="field">
+          <label for="px">Entry price</label>
+          <input id="px" type="number" value="78511" min="0.0000001" step="any">
+        </div>
+        <div class="field">
+          <label for="mode">Stop defined by</label>
+          <select id="mode">
+            <option value="atr">ATR(20) × multiple</option>
+            <option value="price">A stop price</option>
+          </select>
+        </div>
+        <div class="field" id="atrfield">
+          <label for="atr">ATR(20), same units as price</label>
+          <input id="atr" type="number" value="3550" min="0.0000001" step="any">
+        </div>
+        <div class="field" id="multfield">
+          <label for="mult">ATR multiple</label>
+          <input id="mult" type="number" value="2" min="0.25" max="10" step="0.25">
+        </div>
+        <div class="field" id="stopfield" style="display:none">
+          <label for="stop">Stop price</label>
+          <input id="stop" type="number" value="71411" min="0" step="any">
+        </div>
+        <div class="field">
+          <label for="heat">Open risk already on (%)</label>
+          <input id="heat" type="number" value="0" min="0" max="20" step="0.25">
+        </div>
+      </div>
+      <div class="results">
+        <div class="res"><span class="k">Stop distance</span><span class="v" id="o-dist">—</span></div>
+        <div class="res"><span class="k">Risk in dollars</span><span class="v" id="o-risk">—</span></div>
+        <div class="res"><span class="k">Units to buy</span><span class="v" id="o-units">—</span></div>
+        <div class="res"><span class="k">Position value</span><span class="v" id="o-notional">—</span></div>
+        <div class="res"><span class="k">Share of account</span><span class="v" id="o-share">—</span></div>
+        <div class="res"><span class="k">Total portfolio heat</span><span class="v" id="o-heat">—</span></div>
+        <div id="verdict">Enter a trade to see the size.</div>
+      </div>
+    </div>
+  </div>
+  <p class="sm" style="margin-top:12px">Defaults are pre-filled with a live Bitcoin example: entry $78,511, ATR(20) roughly $3,550 at 4.5% daily range, stop 2 ATR below at $71,411. On a $10,000 account at 1% risk that is a $1,105 position — 0.11× your equity. Not a typo, and not timidity.</p>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section id="reality">
+  <div class="sechead"><span class="part">PART 10</span><h2>What the math promises, and what it doesn't</h2></div>
+  <p class="lede">Twenty thousand simulated 200-trade careers, assuming a trend-following profile: 38% of trades win, winners average 2.8× the size of losers, one risk unit per trade. That is a good system by professional standards — an expectancy of +0.44R.</p>
+
+  <div class="tablewrap" style="margin:26px 0 14px">
+    <table>
+      <caption>200 trades, 20,000 simulated paths — the cost of each risk setting</caption>
+      <thead>
+        <tr><th>Risk per trade</th><th class="r">Median</th><th class="r">Unlucky 5th</th><th class="r">Lucky 95th</th><th class="r">Median max DD</th><th class="r">1-in-20 DD</th><th class="r">Worst DD seen</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="name">0.5%</td><td class="n">1.55×</td><td class="n">1.25×</td><td class="n">1.90×</td><td class="n">5.4%</td><td class="n">9.1%</td><td class="n">17.5%</td></tr>
+        <tr><td class="name">1.0% <span class="sm">— Hite's rule</span></td><td class="n">2.35×</td><td class="n">1.55×</td><td class="n">3.55×</td><td class="n">10.7%</td><td class="n">17.4%</td><td class="n">33.1%</td></tr>
+        <tr><td class="name">2.0%</td><td class="n">5.13×</td><td class="n">2.26×</td><td class="n">11.68×</td><td class="n">20.4%</td><td class="n">32.6%</td><td class="n">54.4%</td></tr>
+        <tr><td class="name">5.0%</td><td class="n">36.52×</td><td class="n">4.91×</td><td class="n">271×</td><td class="n">44.4%</td><td class="n">65.0%</td><td class="n">91.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>Read the 5% row carefully, because it is the row that ruins people. Its median outcome is a 36-fold return — spectacular, and exactly the story that gets told. Its typical worst drawdown is 44%, and one path in twenty loses 65%. Nobody survives a 65% drawdown emotionally, which means nobody actually collects that 36×; they quit somewhere in the hole and the beautiful median never arrives. <strong>The 1% rule isn't about the returns column. It's about staying in the seat long enough for the returns column to happen.</strong></p>
+    <p>The other number worth internalising: at a 38% win rate, across 200 trades, <strong>your longest losing streak will average about 10 trades in a row</strong>, and there is roughly an 80% chance you hit a run of ten or worse. Not because anything is broken. That is simply what a 62%-lose-rate looks like from the inside. Plan the streak now, while it's abstract.</p>
+  </div>
+
+  <div class="tablewrap" style="margin:26px 0 12px">
+    <table>
+      <caption>The same 1% risk, if your real edge is weaker than you assumed</caption>
+      <thead><tr><th>Scenario</th><th class="r">Expectancy</th><th class="r">Median</th><th class="r">Unlucky 5th</th><th class="r">Median max DD</th><th class="r">Chance you end down</th></tr></thead>
+      <tbody>
+        <tr><td class="name">The edge you assumed</td><td class="n">+0.44R</td><td class="n">2.35×</td><td class="n">1.55×</td><td class="n">10.5%</td><td class="n">0.1%</td></tr>
+        <tr><td class="name">Half that edge</td><td class="n">+0.12R</td><td class="n">1.24×</td><td class="n">0.86×</td><td class="n">15.9%</td><td class="n">16.9%</td></tr>
+        <tr><td class="name">No edge at all</td><td class="n">0.00R</td><td class="n">0.98×</td><td class="n">0.68×</td><td class="n">21.6%</td><td class="n">53.1%</td></tr>
+        <tr><td class="name">After fees, funding, slippage</td><td class="n">−0.10R</td><td class="n">0.80×</td><td class="n">0.60×</td><td class="n">28.4%</td><td class="n">87.6%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sm" style="max-width:70ch">This second table is the one to keep. Costs on crypto perps — spread, taker fees, funding — are entirely capable of moving you from the first row to the last. Measure your all-in cost per round trip in R before you scale anything up.</p>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section id="compound">
+  <div class="sechead"><span class="part">PART 11</span><h2>What actually compounds at this account size</h2></div>
+  <p class="lede">If the goal is compounding capital, this part changes the job description — not to make it smaller, but to put the two engines in the right order. Contributions build the capital; the edge multiplies it. Both matter, and for the next few years the first one is doing more of the work than feels intuitive.</p>
+
+  <div class="tablewrap" style="margin:24px 0 12px">
+    <table>
+      <caption>$15,000 starting capital, ten years</caption>
+      <thead><tr><th>Approach</th><th class="r">Annual return</th><th class="r">Saved per year</th><th class="r">After 10 years</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Exceptional trading, nothing added</td><td class="n">15%</td><td class="n">$0</td><td class="n">$60,700</td></tr>
+        <tr><td class="name">SG Trend reality, nothing added</td><td class="n">7.5%</td><td class="n">$0</td><td class="n">$30,900</td></tr>
+        <tr><td class="name">Plain index, nothing added</td><td class="n">8%</td><td class="n">$0</td><td class="n">$32,400</td></tr>
+        <tr><td class="name">Plain index + $500/mo saved</td><td class="n">8%</td><td class="n">$6,000</td><td class="n">$119,300</td></tr>
+        <tr><td class="name">Plain index + $800/mo saved</td><td class="n">8%</td><td class="n">$9,600</td><td class="n">$171,500</td></tr>
+        <tr><td class="name">Exceptional trading + $800/mo saved</td><td class="n">15%</td><td class="n">$9,600</td><td class="n">$255,600</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>Row one against row four is the whole argument. A trading performance most professionals never sustain, held for a decade, loses to an index fund and a savings habit. And the crossover point is exact: at $800/month of contributions, <strong>returns only overtake contributions once the account passes $64,000</strong> — and that assumes 15%. At SG Trend's actual 7.5%, the crossover is $128,000. Until then your salary is the engine and the market is the multiplier, not the other way round.</p>
+    <p>So the first system to build is a contribution system: automated, a fixed percentage, moved on payday before anything discretionary, and instrumented so that <em>contribution rate</em> sits next to returns as a headline number. It is boring next to Larry Hite. It is also, on the arithmetic above, worth more than any edge you could realistically develop in the next three years.</p>
+  </div>
+
+  <div class="grid g3" style="margin:26px 0">
+    <div class="card">
+      <h3>Frequency is a cost</h3>
+      <p class="note">Contributions don't multiply with activity — costs do. At 0.15R per round trip you lose 34% of your edge whether you trade 12 times a year or 150. Compounding wants the fewest decisions that still capture the trend.</p>
+    </div>
+    <div class="card">
+      <h3>Drawdowns are asymmetric</h3>
+      <p class="note">Lose 20%, need +25% to get flat. Lose 50%, need +100%. Lose 65% — the 1-in-20 outcome at 5% risk — and you need +186%. For a learning account that's tuition. For a compounding account it's years erased.</p>
+    </div>
+    <div class="card">
+      <h3>Perps carry badly</h3>
+      <p class="note">High cost, high variance, and negative carry — you pay funding to hold. An equity index pays you earnings growth for doing nothing. Perps are a speculation vehicle, not a compounding one.</p>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">The architecture that follows</h3>
+    <p>A <strong>contribution engine</strong> feeding a <strong>boring core</strong> at 75–85% — cheap, broad, few decisions — with a <strong>satellite sleeve</strong> at 15–25% running the system in Part 08, sized so that a −20% drawdown in the sleeve is a −4% drawdown on total capital.</p>
+    <p>And then the benchmark that makes the whole thing honest, which almost no retail trader ever sets: <strong>the satellite has to beat the core, after all costs.</strong> Not beat zero — beat what that money would have done sitting in the index untouched. The ledger is what lets you actually know which, and knowing is the entire point: an edge you can <em>prove</em> is an edge you can scale with confidence when the capital arrives. That's the real argument for building the sleeve now while the account is small. Skill compounds faster than capital does at this size, and it's the skill that decides what the capital is worth in ten years.</p>
+  </div>
+
+  <div class="callout">
+    <h3>One drag nobody models</h3>
+    <p>You earn in IDR, convert to USD, and custody in Hong Kong and on Bybit. FX conversion spread on the way in and out, plus Indonesian tax treatment of foreign investment income, never appears in a trading P&amp;L — and comes straight off compounding. Price both before optimising a stop-loss by a tenth of an ATR. I don't know your specific rates; find them and write them down.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section id="delta">
+  <div class="sechead"><span class="part">PART 12</span><h2>The Greeks, and which side of an option you're allowed to be on</h2></div>
+  <p class="lede">An option's profit and loss is an itemised bill with four lines. Learn to read the bill and options risk management is almost entirely done.</p>
+
+  <div class="prose">
+    <p>Your perp has exactly one exposure: price. That's why the sizing formula in Part 08 works — exposure is fixed at whatever you set, and only price changes. An option has four exposures at once, which is how you end up right about direction and still down 39%.</p>
+  </div>
+
+  <div class="grid g4" style="margin:24px 0">
+    <div class="card">
+      <h3>Delta — the price moved</h3>
+      <p class="note">How much you make per $1 the underlying moves. A perp is delta 1.00, permanently. A 30-day at-the-money BTC call is delta <strong>0.54</strong> — you hold the equivalent of half a coin.</p>
+    </div>
+    <div class="card">
+      <h3>Gamma — your size changed</h3>
+      <p class="note">Delta is the speed; gamma is the acceleration. That same call is delta 0.24 if BTC drops 10%, and delta 0.80 if it rises 10%. Your position resized itself while you slept.</p>
+    </div>
+    <div class="card">
+      <h3>Theta — a day passed</h3>
+      <p class="note">Rent. That call bleeds about <strong>$72 a day</strong> if nothing happens. You pay it when long, collect it when short. Nothing else in your system charges you for the passage of time.</p>
+    </div>
+    <div class="card">
+      <h3>Vega — fear was repriced</h3>
+      <p class="note">Profit or loss per one point of implied volatility. That call is worth about <strong>$89</strong> per vol point — so a move from 45 to 38 costs $626 with the price completely unchanged.</p>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p><strong>Gamma deserves a second look, because it is trend following in mechanical form.</strong> Price rises, your position grows; price falls, your position shrinks. That is automatic pyramiding into winners and automatic de-risking into losers, without a rule and without you being awake. Long options and trend following share a payoff shape — many small losses as premium bleeds, rare large wins — which is why Hite's line about not knowing many people who got rich taking small profits is really a statement about convexity.</p>
+  </div>
+
+  <div class="tablewrap" style="margin:26px 0 12px">
+    <table>
+      <caption>Four real scenarios — where the money actually came from</caption>
+      <thead><tr><th>Scenario</th><th class="r">Premium</th><th class="r">Delta</th><th class="r">Gamma</th><th class="r">Vega</th><th class="r">Theta</th><th class="r">Result</th></tr></thead>
+      <tbody>
+        <tr><td class="name">BTC goes nowhere <span class="sm">long call, 14 days flat, vol 45→38</span></td><td class="n">$4,183</td><td class="n">$0</td><td class="n">$0</td><td class="n">−$626</td><td class="n">−$1,007</td><td class="n">−$1,613</td></tr>
+        <tr><td class="name">August breakout, long <span class="sm">$62.9k→$80.5k in 8 days</span></td><td class="n">$1,735</td><td class="n">+$7,140</td><td class="n">+$9,515</td><td class="n">+$699</td><td class="n">−$351</td><td class="n">+$14,024</td></tr>
+        <tr><td class="name">August breakout, short <span class="sm">the mirror position</span></td><td class="n">$1,735</td><td class="n">−$7,140</td><td class="n">−$9,515</td><td class="n">−$699</td><td class="n">+$351</td><td class="n">−$14,024</td></tr>
+        <tr><td class="name">Gold, 30 January <span class="sm">short put, one session, per ounce</span></td><td class="n">$59.90</td><td class="n">−$124.70</td><td class="n">−$104.10</td><td class="n">−$81.30</td><td class="n">+$2.10</td><td class="n">−$341.60</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sm" style="max-width:70ch">Black-Scholes repricing at r = 4.70%. Rows don't sum exactly to the result — the residual is what the Greeks failed to explain, and it grows with the size of the move. That is the point: the Greeks are a local approximation and they break down precisely on the days that matter, which is why desks reprice the whole book at ±10/20/30% against a range of vol shifts rather than managing on Greeks alone.</p>
+
+  <div class="prose" style="margin-top:26px">
+    <p><strong>Read row one.</strong> Delta and gamma are both zero — BTC didn't move an inch. You were right about direction and still lost 39% of your stake, entirely to rent and a vol drop. Nothing in a trend system prepares you for a position that loses while the chart does nothing.</p>
+    <p><strong>Read rows two and three together.</strong> Same eight days, same contract, opposite sides. Long, gamma out-earns delta — most of the profit came not from being long but from getting longer as it ran. Short, you collect $1,735 and lose $14,024: eight times what you were paid, with theta the only positive line on the board.</p>
+    <p><strong>Read row four and stop.</strong> One session. You collect $59.90 an ounce and lose $341.60, and the vol spike alone — $81.30 — cost more than everything you were paid. This is the day Hite's friend loses the estate on, and it arrives without notice.</p>
+  </div>
+
+  <div class="callout warn" style="margin-top:24px">
+    <h3>The rule this produces</h3>
+    <p>Ask of each scenario: <em>before entering, what is the most I can lose?</em> The two you bought have an answer — $4,183 and $1,735, known at the moment of the click. The two you sold have no answer at all. So: <strong>buy options, don't sell them, and the premium you pay is your 1% risk unit.</strong> On a $10,000 account that's $100 of premium and no stop required — the loss is capped by construction, you cannot be liquidated, and a weekend gap cannot enlarge it. Gold's 30 January cannot touch you. That is a rare and valuable property, and its price is row one: you pay theta, so you can be entirely right and still lose because it happened on the wrong fortnight.</p>
+  </div>
+
+  <div class="prose" style="margin-top:24px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">Which answers the delta-neutral question</h3>
+    <p>A delta-neutral spread cancels the net deltas so the position is indifferent to small directional moves. What's left is a bet on gamma, vega and theta — on <em>how much</em> things move and how fear gets priced, rather than which way. Delta-neutral is not risk-neutral, and the name does real damage on that point: sell one and you are short gamma, collecting a little each quiet day and losing a great deal on the day it gaps.</p>
+    <p>The skew is the thing. Trend following is positively skewed — many small losses, rare enormous wins, worst day bounded by your stop. Short volatility is negatively skewed — many small wins, rare enormous losses, worst day bounded by nothing. Opposite temperaments, and a short-vol equity curve is beautiful and smooth right up until it isn't. Hite's arbitrageur friend is on your page precisely because a smooth curve teaches the wrong lesson about how much you can carry.</p>
+    <p>So if you want volatility exposure, take the long-vol side: a debit spread or a long straddle sized so the premium <em>is</em> the 1% unit. You keep the positive skew, the loss is capped at what you put in, and no margin call arrives at 3am Jakarta time.</p>
+  </div>
+
+  <div class="callout" style="margin-top:24px">
+    <h3>And the last trap, from your own page</h3>
+    <p>Hite's cousin bought $90,000 of Merrill options with $100,000. They expired worthless — so his loss should have been capped at $90,000, leaving him $10,000. He ended up <strong>$10,000 in debt</strong>, because he borrowed to buy more as they fell. He was holding the one instrument whose downside is bounded by construction, and he unbounded it himself. The instrument gives you the cap. Only the sizing rule keeps it.</p>
+  </div>
+</section>
+
+<!-- ===================== 13 ===================== -->
+<section id="next">
+  <div class="sechead"><span class="part">PART 13</span><h2>The first 90 days</h2></div>
+  <p class="lede">Not "learn trend following." Nine things with dates on them.</p>
+
+  <div class="grid g3" style="margin:24px 0 26px">
+    <div class="card">
+      <h3>Days 1–30 · Prove the rules</h3>
+      <ul class="check">
+        <li>Backtest Part 08 on 10 years of daily data for all nine markets. Record CAGR, worst drawdown, win rate, average win ÷ average loss.</li>
+        <li>Re-run it with the parameters shifted ±30% (35/15/150-day, 1.5×ATR). If results collapse, the system is fitted — widen it, don't tune it.</li>
+        <li>Measure your all-in round-trip cost in R on each venue. Put the number in writing.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Days 31–60 · Prove yourself</h3>
+      <ul class="check">
+        <li>Trade it live at <strong>0.25% risk</strong> — real money, trivial size. The point is behavioural data, not P&amp;L.</li>
+        <li>Log every trade: signal date, entry, stop, size, exit, exit reason, and one line on what you felt.</li>
+        <li>Log every signal you <em>skipped</em> and why. This log is worth more than the P&amp;L.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Days 61–90 · Prove the loop</h3>
+      <ul class="check">
+        <li>Sunday review, 30 minutes: signals taken vs. available, overrides, heat, vol ceilings breached.</li>
+        <li>Count overrides. Zero for four straight weeks earns a step up to 0.5% risk. Any override resets the counter.</li>
+        <li>Reach 1% only after 50 logged trades with no override. Fifty trades is a sample; ten is a story.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>One structural note about the skipped-signal log, since your recorded pattern is being right about direction and entry and then closing on the first counter-candle. That behaviour doesn't show up in a P&amp;L — a small win looks fine. It only shows up when you write down, next to every early exit, where the trade eventually went. After twenty entries that column becomes impossible to argue with, and it fixes the habit faster than any amount of resolve.</p>
+  </div>
+
+  <blockquote style="margin-top:40px">
+    It is a happy circumstance that when nature gives us true burning desires, it also gives us the means to satisfy them.
+    <cite>Ed Seykota, quoted by Schwager — loc. 2,735</cite>
+  </blockquote>
+
+  <div class="prose">
+    <p>Schwager quotes that line about Larry Hite, who spent years as a scriptwriter, an actor and a rock promoter before succeeding at the one thing he actually burned for. It sits three paragraphs below the four risk principles for a reason: the risk rules aren't a constraint on the life you want, they're the thing that keeps you in the game long enough to still be there living it. Every rule in Part 08 exists to make sure that whatever happens in the market, you are still standing on the other side of it — with your capital, your nerve, and your plans for Surabaya intact.</p>
+  </div>
+</section>
+
+<!-- ===================== 14 ===================== -->
+<section id="equation">
+  <div class="sechead"><span class="part">PART 14</span><h2>The equation behind all of it</h2></div>
+  <p class="lede">Everything to this point has been one trader's craft. What follows is the discipline that craft becomes when you industrialise it — and the whole field hangs off a single equation.</p>
+
+  <div class="eq">
+    <div class="f">IR = IC × √breadth</div>
+    <p class="g">Your risk-adjusted return equals your skill multiplied by the square root of your number of <em>independent</em> bets. Grinold's Fundamental Law of Active Management.</p>
+  </div>
+
+  <div class="prose">
+    <p><strong>IC</strong> is the information coefficient: the correlation between what you forecast and what actually happens. <strong>Breadth</strong> is how many genuinely independent bets you get per year. And you have already computed that second number — back in Part 07, nine uncorrelated markets gave you 4.09 independent bets while forty alt perps at ρ=0.75 gave 1.32. Run identical skill through both:</p>
+  </div>
+
+  <div class="tablewrap" style="margin:22px 0 12px">
+    <table>
+      <caption>Same skill (IC = 0.05), different breadth</caption>
+      <thead><tr><th>Book</th><th class="r">Independent bets</th><th class="r">Breadth / year</th><th class="r">Achievable IR</th></tr></thead>
+      <tbody>
+        <tr><td class="name">40 alt perps, monthly</td><td class="n">1.32</td><td class="n">15.8</td><td class="n">0.20</td></tr>
+        <tr><td class="name">9 uncorrelated markets, monthly</td><td class="n">4.09</td><td class="n">49.1</td><td class="n">0.35</td></tr>
+        <tr><td class="name">9 uncorrelated markets, weekly</td><td class="n">4.09</td><td class="n">212.7</td><td class="n">0.73</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p><strong>1.76× the risk-adjusted return from breadth alone</strong>, with no improvement in skill whatsoever. Your correlation problem and your alpha problem are the same equation — and breadth is by far the cheaper term to fix. Almost everyone attacks the other one.</p>
+    <p>Calibrate on IC before you go further: a genuinely good signal runs about <strong>0.03 to 0.05</strong>. Right roughly 52% of the time. Renaissance is not 90% accuracy; it's a tiny persistent edge at enormous breadth. Anyone offering you a signal that's usually right is selling something.</p>
+  </div>
+
+  <div class="prose" style="margin-top:26px">
+    <h3 style="font-size:1rem; margin-bottom:.5rem">And why the pipeline has to exist: alpha decays</h3>
+    <p>Part 03 said gaps exist. The other half is that gaps <em>close</em> — published anomalies lose a large share of their return after publication, because that is what publication does. Every filter between a backtest and a bank balance takes a cut:</p>
+  </div>
+
+  <div class="tablewrap" style="margin:20px 0 12px">
+    <table>
+      <caption>What survives, from a 30% backtest</caption>
+      <thead><tr><th>Stage</th><th class="r">Cut</th><th class="r">Remaining</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Gross backtest</td><td class="n">—</td><td class="n">30.0%</td><td>what the spreadsheet said</td></tr>
+        <tr><td class="name">Lookahead + survivorship</td><td class="n">−8pp</td><td class="n">22.0%</td><td>data errors you didn't know you had</td></tr>
+        <tr><td class="name">Factor exposure stripped</td><td class="n">−7pp</td><td class="n">15.0%</td><td>it was momentum beta, not alpha</td></tr>
+        <tr><td class="name">Market impact + slippage</td><td class="n">−4pp</td><td class="n">11.0%</td><td>your own orders move the price</td></tr>
+        <tr><td class="name">Fees + financing</td><td class="n">−3pp</td><td class="n">8.0%</td><td>the broker's cut</td></tr>
+        <tr><td class="name">Crowding, 3 yrs at a 2-yr half-life</td><td class="n">×0.35</td><td class="n">2.8%</td><td>others found it too</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sm" style="max-width:70ch">Illustrative magnitudes, not a measurement — but the <em>order</em> is real and each row is an intervention point. Roughly 9% of the backtest survives to year three.</p>
+
+  <div class="callout warn">
+    <h3>Which changes the goal</h3>
+    <p>An edge is a depleting asset with a half-life. So the objective was never "find the strategy" — it's to build something that produces new candidates about as fast as the old ones die. That is why what follows is nine stages of infrastructure and only one stage of ideas.</p>
+  </div>
+</section>
+
+<!-- ===================== 15 ===================== -->
+<section id="maths">
+  <div class="sechead"><span class="part">PART 15</span><h2>The maths that carries the weight</h2></div>
+  <p class="lede">Being good at "this type of maths" is narrower than it looks. Four areas do almost all the work, and one famous one is nearly irrelevant to signal research.</p>
+
+  <div class="tablewrap" style="margin:24px 0 12px">
+    <table>
+      <caption>What actually gets used</caption>
+      <thead><tr><th>Area</th><th>What you need from it</th><th class="r">Weight</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Probability &amp; statistics</td><td>Distributions, hypothesis testing, confidence intervals, multiple-testing correction</td><td class="n">Essential</td></tr>
+        <tr><td class="name">Linear algebra</td><td>Regression as projection, covariance matrices, eigenvectors, PCA — factor modelling is entirely here</td><td class="n">Essential</td></tr>
+        <tr><td class="name">Time series</td><td>Stationarity, autocorrelation, cointegration, what differencing destroys</td><td class="n">Essential</td></tr>
+        <tr><td class="name">Optimization</td><td>Convex problems, quadratic programming, constraints — portfolio construction runs on this</td><td class="n">High</td></tr>
+        <tr><td class="name">Numerical methods</td><td>Conditioning, matrix inversion instability, why covariance needs shrinkage</td><td class="n">Medium</td></tr>
+        <tr><td class="name">Stochastic calculus</td><td>Itô, SDEs, the Black–Scholes derivation</td><td class="n">Pricing only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h3>Start here, in this order</h3>
+      <ul>
+        <li>Regression, deeply — not "how to call OLS" but what residuals mean, why t-stats lie, what multicollinearity does to coefficients</li>
+        <li>Hypothesis testing and the multiple-comparisons problem</li>
+        <li>Covariance and correlation, and why both are unstable when estimated</li>
+        <li>Stationarity and autocorrelation</li>
+      </ul>
+    </div>
+    <div class="card skip">
+      <h3>Skip, for now</h3>
+      <ul>
+        <li><strong>Stochastic calculus.</strong> Beautiful, and unnecessary unless you're pricing derivatives.</li>
+        <li><strong>Deep learning as a starting point.</strong> Needs more data than you have and hides lookahead bias exceptionally well.</li>
+        <li><strong>HFT and latency.</strong> A different sport with a hardware budget.</li>
+        <li><strong>Interview brainteasers.</strong> Signalling, not skill.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tablewrap" style="margin:26px 0 0">
+    <table>
+      <caption>Five books, in reading order — alongside the stages, not before them</caption>
+      <thead><tr><th>Book</th><th>Author</th><th>Read during</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Quantitative Trading</td><td>Ernest Chan</td><td>Stages 00–01 — the gentlest honest start</td></tr>
+        <tr><td class="name">Active Portfolio Management</td><td>Grinold &amp; Kahn</td><td>Stages 02–03 — where IR = IC × √breadth comes from</td></tr>
+        <tr><td class="name">Empirical Asset Pricing</td><td>Bali, Engle &amp; Murray</td><td>Stage 03 — the mechanics of factor work</td></tr>
+        <tr><td class="name">Advances in Financial Machine Learning</td><td>López de Prado</td><td>Stage 04 — purged CV, deflated Sharpe, the honesty toolkit</td></tr>
+        <tr><td class="name">Trading and Exchanges</td><td>Larry Harris</td><td>Stage 05 — the microstructure reference, and readable</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 16 ===================== -->
+<section id="pipeline">
+  <div class="sechead"><span class="part">PART 16</span><h2>Nine stages, nine gates</h2></div>
+  <p class="lede">Twelve months at 8–12 hours a week, in dependency order. Each stage names one thing you build and one gate — a specific test that proves you learned it rather than read it. Don't advance on a failed gate; later stages produce confident nonsense on a broken foundation.</p>
+
+  <div class="prog">
+    <span class="txt" id="ptext">0 of 10 gates passed</span>
+    <div class="bar"><div class="fill" id="pfill"></div></div>
+  </div>
+
+  <div class="spine">
+
+    <div class="stage"><div class="dot">00</div><div class="scard">
+      <div class="stitle"><h3>Tooling</h3><span class="when">Weeks 1–3</span></div>
+      <p>Not "learn Python" — learn the twenty operations that matter. Loading and aligning series on a time index, resampling, rolling windows, <code>merge_asof</code> for irregular timestamps, and above all <code>shift()</code>. Pandas, numpy, matplotlib. Nothing else yet.</p>
+      <div class="build"><h4>Build</h4><p>Load a daily price series, compute a 200-day moving average and a 20-day ATR, plot both. Fifty lines.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Explain out loud why <code>signal.shift(1)</code> appears in every backtest, and what breaks without it. If you can't, you will spend a year producing beautiful lies.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s0"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">01</div><div class="scard">
+      <div class="stitle"><h3>Data hygiene — "messy data into signals"</h3><span class="when">Weeks 3–6</span></div>
+      <p>The unglamorous 70% of the job. Survivorship bias (your universe contains only the survivors). Point-in-time data — what was <em>knowable</em> then, not what the database says now. Corporate actions and adjusted prices. Timestamp alignment across venues and timezones, a real problem when you trade US equities and 24/7 crypto from Jakarta. Outliers that are real versus bad ticks.</p>
+      <div class="build"><h4>Build</h4><p>A loader with a validation suite that fails loudly: gap detection, duplicate timestamps, impossible values, timezone assertion. It should refuse to return data it doesn't trust.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Deliberately introduce lookahead into your own backtest and measure how much the Sharpe improves. Feeling that number in code you wrote inoculates you permanently.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s1"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">02</div><div class="scard">
+      <div class="stitle"><h3>Signal evaluation before backtesting</h3><span class="when">Weeks 6–12</span></div>
+      <p>The habit that separates research from tinkering: evaluate a signal <em>before</em> you ever draw an equity curve. Information coefficient, IC by forecast horizon, decile spreads, hit rate versus magnitude, turnover. An equity curve is one path; an IC distribution is the whole story.</p>
+      <div class="build"><h4>Build</h4><p>An IC-by-horizon table for one signal: 1, 5, 10, 20, 60 days. The shape of that decay curve <em>is</em> your holding period — you stop guessing it.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Report a signal's IC with a confidence interval. If the interval spans zero you've learned more than a backtest would have told you.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s2"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">03</div><div class="scard">
+      <div class="stitle"><h3>Factor models</h3><span class="when">Weeks 12–18</span></div>
+      <p>The stage that quietly kills the most retail strategies. Cross-sectional regression, risk factors versus alpha factors, residualization. The punchline is blunt: regress your strategy's returns on market, size, value, momentum, quality and volatility — whatever survives is your alpha, and it's usually far less than you hoped. Most "edges" are a factor loading you could have bought in an ETF for nine basis points.</p>
+      <div class="build"><h4>Build</h4><p>Regress your strategy's returns against a standard factor set. Report the intercept, its t-statistic, and the R² of the fit.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Alpha t-stat below 2 after factor adjustment means you don't have alpha, you have exposure. Say that about your own strategy without flinching, then decide what to do.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s3"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">04</div><div class="scard">
+      <div class="stitle"><h3>Backtesting without lying to yourself</h3><span class="when">Weeks 18–24</span></div>
+      <p>Walk-forward analysis. Purged cross-validation with an embargo, because financial data overlaps and ordinary k-fold leaks the future into the past. And the big one: multiple testing. Try a hundred variants and the best looks excellent by chance alone, so the Sharpe must be <em>deflated</em> by how many things you tried.</p>
+      <div class="build"><h4>Build</h4><p>A walk-forward harness with a genuine out-of-sample lockbox — data you may touch exactly once, at the end.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Count the variants you actually tested, then compute the deflated Sharpe. Most promising backtests don't survive this, and finding out here costs nothing.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s4"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">05</div><div class="scard">
+      <div class="stitle"><h3>Order book and microstructure</h3><span class="when">Weeks 24–30</span></div>
+      <p>The anatomy: price levels, depth, queue position, the spread as compensation for adverse selection. Why a market order pays the spread and a limit order pays in option value — you are writing a free option to anyone better informed. Maker/taker economics, and on your venue, funding as the perpetual's carry.</p>
+      <div class="build"><h4>Build</h4><p>Reconstruct a simple limit order book from tick data for one instrument. Watch a large order arrive and walk the levels.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Explain why a resting limit order is a short option position, and what you're paid for bearing it.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s5"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">06</div><div class="scard">
+      <div class="stitle"><h3>Market impact and capacity</h3><span class="when">Weeks 30–34</span></div>
+      <p>The most elegant result in the field: impact scales with roughly the <em>square root</em> of order size relative to daily volume, not linearly. Cost ≈ spread + k·σ·√(Q/V). So every strategy has a hard capacity ceiling — a size above which its own trading destroys the edge. This is also your single largest structural advantage right now, because you sit far below anyone's limit.</p>
+      <div class="build"><h4>Build</h4><p>A cost model for your own markets and sizes. Then recompute every backtest net of it.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>State your strategy's capacity in dollars — the size at which the edge goes to zero. If you can't compute it, you don't yet know what you own.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s6"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">07</div><div class="scard">
+      <div class="stitle"><h3>Portfolio construction</h3><span class="when">Weeks 34–40</span></div>
+      <p>Turning signals into weights — where breadth is actually harvested. Mean-variance optimisation and why it's famously fragile (it maximises estimation error). Covariance shrinkage. Risk parity and volatility targeting. Turnover penalties, because the optimiser will happily trade you into bankruptcy through costs.</p>
+      <div class="build"><h4>Build</h4><p>Convert your signal set into weights with a volatility target and an explicit turnover penalty. Compare against equal-weight, and be honest when equal-weight wins — it often does.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Show the optimised portfolio beats naive equal-weighting out of sample, after costs. A genuinely hard bar; failing it is informative.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s7"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">08</div><div class="scard">
+      <div class="stitle"><h3>Production, and debugging in the dark</h3><span class="when">Weeks 40–52</span></div>
+      <p>Not "push code straight to production" — that phrase is recruiting copy. The real sequence is <strong>shadow mode</strong> (the system runs and logs every order it <em>would</em> have sent, trading nothing), then <strong>canary capital</strong> at 1–5% of target size, then staged scale-up with automated kill switches on drawdown, position limits and order rate. Plus reconciliation: your recorded position against the exchange's, daily, because they will diverge and the difference is always a bug.</p>
+      <p>Production debugging has one hard question — <em>is this a bug or a regime change?</em> The discipline that answers it is logging your <em>expected</em> values alongside actuals, so divergence is visible immediately rather than inferred from a bad month.</p>
+      <div class="build"><h4>Build</h4><p>Run the strategy in shadow mode for 30 days. Reconcile daily. Log expected versus actual fills and count the difference in R.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Thirty consecutive days of clean reconciliation before a single dollar goes live. This is the stage where people lose money to typos rather than to markets.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s8"> Gate passed</label>
+    </div></div>
+
+    <div class="stage"><div class="dot">09</div><div class="scard">
+      <div class="stitle"><h3>The alpha lifecycle</h3><span class="when">Ongoing, forever</span></div>
+      <p>Where the pipeline becomes a pipeline. Monitor IC live and watch it decay. Set a retirement rule in advance — the drawdown or IC threshold at which a signal switches off — and write it while you're calm, because you won't be calm when it triggers. Then feed the queue: new candidates entering at stage 01 as mature ones age out at stage 09.</p>
+      <div class="build"><h4>Build</h4><p>A monitoring dashboard: live IC by signal with its confidence band, realised versus expected costs, current portfolio heat.</p></div>
+      <div class="gatebox"><h4>Gate</h4><p>Retire a signal you like, on the rule, on schedule, while it still has sentimental value. The hardest gate here, and the one that decides whether you're running a process or a hobby.</p></div>
+      <label class="gate"><input type="checkbox" data-k="s9"> Gate passed</label>
+    </div></div>
+
+  </div>
+
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card"><h3>Month 3</h3><p class="note">You catch a lookahead bug in your own code before it reaches a backtest. You've stopped being impressed by equity curves.</p></div>
+    <div class="card"><h3>Month 6</h3><p class="note">You kill your own favourite strategy after the factor regression. It stings, and you do it anyway.</p></div>
+    <div class="card"><h3>Month 12</h3><p class="note">You can state your strategy's capacity in dollars, its IC with a confidence interval, and the rule that will retire it.</p></div>
+  </div>
+
+  <div class="prose" style="margin-top:30px">
+    <p>None of the nine stages need to be world-class. They need to be present, honest and hard to break — which is Hite's sentence again, applied to the process rather than the trades. A mediocre signal with rigorous validation makes money; a brilliant signal with no validation is indistinguishable from luck until the day it isn't.</p>
+    <p>And a last word on profiting while everyone else panics, since that was on your list. It isn't a temperament. It's a balance sheet: dry powder, rules written down while calm, no margin call arriving mid-crash. All three are decisions made months in advance — which means the panic trade is won at stages 07 and 08, not on the day.</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Not financial advice.</strong> I'm not a financial adviser, and nothing here is a recommendation to buy or sell anything. Every parameter in Part 08 is a conventional starting point that has not been backtested on your data or your venues, the volatility figures are planning estimates drawn from published indices on 24–25 August 2026, and the simulations assume an edge you have not yet demonstrated. Trading involves the risk of losing the money you put in, and leveraged crypto positions can lose more than that. Test everything before you fund it.</p>
+  <div class="srcs">
+    <a href="https://fred.stlouisfed.org/series/VIXCLS">Cboe VIX (VIXCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/VXNCLS">Cboe Nasdaq-100 Vol (VXNCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/RVXCLS">Cboe Russell 2000 Vol (RVXCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/GVZCLS">Cboe Gold ETF Vol (GVZCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/OVXCLS">Cboe Crude Oil ETF Vol (OVXCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/VXEEMCLS">Cboe EM ETF Vol (VXEEMCLS) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/SP500">S&amp;P 500 (SP500) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/DGS10">10-Year Treasury (DGS10) — FRED</a>
+    <a href="https://fred.stlouisfed.org/series/CBBTCUSD">Coinbase Bitcoin (CBBTCUSD) — FRED</a>
+    <a href="https://www.coindesk.com/daybook-us/2026/08/07/bitcoin-s-volatility-has-nearly-disappeared-the-risk-hasn-t">Bitcoin's volatility has nearly disappeared — CoinDesk</a>
+    <a href="https://www.coindesk.com/markets/2026/08/25/a-massive-usd6-4-billion-bitcoin-options-expiry-on-friday-could-amplify-volatility">$6.4B Bitcoin options expiry — CoinDesk</a>
+    <a href="https://www.coindesk.com/business/2026/08/25/live-updates-bitcoin-etfs-draw-a-seventh-straight-day-of-inflows-as-the-rally-holds-above-usd80-000">Bitcoin rejected at the 50-week average — CoinDesk</a>
+    <a href="https://crypto.news/bitcoin-price-hits-80000-after-28-percent-rally/">Bitcoin hits $80,000 after 28% rally — crypto.news</a>
+    <a href="https://www.forbes.com/advisor/investing/gold-price/">Gold price today — Forbes Advisor</a>
+    <a href="https://www.wisdomtree.com/us/insights/blog/golds-violent-reset-a-correction-not-a-collapse">Gold's violent reset — WisdomTree</a>
+    <a href="https://www.toptradersunplugged.com/trend-following-week-in-review-july-31-2026/">Trend Following: Week in Review, 31 July 2026 — Top Traders Unplugged</a>
+    <a href="https://www.toptradersunplugged.com/trend-following-performance-report-december-2025/">Trend Following Performance Report — Top Traders Unplugged</a>
+    <a href="https://coinlaw.io/memecoin-statistics/">Memecoin statistics 2026 — Coinlaw</a>
+  </div>
+</footer>
+
+</div>
+</div><!-- /view-method -->
+
+<div id="view-drills" role="tabpanel" aria-labelledby="tab-drills" hidden>
+  <div class="drillwrap">
+
+    <div class="drillhead"><h2>Gate drills</h2></div>
+    <p class="lede">Ten gates, each one a sitting. No reading — do the thing, then check the box. Progress is shared with Part 16.</p>
+
+    <div class="prog">
+      <span class="txt" id="dtext">0 of 10 gates passed</span>
+      <div class="bar"><div class="fill" id="dfill"></div></div>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <h3>Start here this week</h3>
+      <p style="color:var(--ink)">Drill 00 takes about thirty minutes and everything else rests on it. Do it before you read another word of the method — the point of these ten sittings is that you can't fake your way through any of them, which is exactly why they work.</p>
+    </div>
+
+    <div class="drills">
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">00</span><h3>The shift</h3><span class="dtime">~30 min</span></div>
+        <p class="dgate">Explain why <code>signal.shift(1)</code> appears in every backtest.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Take any daily price series and any rule — a 50-day breakout will do.</li>
+          <li>Build the same backtest twice. Version A uses <code>signal</code>. Version B uses <code>signal.shift(1)</code>.</li>
+          <li>Record both Sharpe ratios side by side.</li>
+          <li>Now say the difference out loud in one sentence, in your own words.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You can say, without pausing: "without the shift I'm deciding on today's close and filling at today's close — I'm trading on information I didn't have yet."</p></div>
+        <label class="gate"><input type="checkbox" data-k="s0"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">01</span><h3>Break it on purpose</h3><span class="dtime">~2 hrs</span></div>
+        <p class="dgate">Introduce lookahead deliberately and measure what it buys you.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Start from your clean Version B backtest and note its Sharpe.</li>
+          <li>Inject three bugs, one at a time: remove the shift; rank using the <em>next</em> 5-day return; restrict the universe to instruments that still exist today.</li>
+          <li>Record the Sharpe after each. Four numbers in one table.</li>
+          <li>Write one line next to each: what real-world impossibility that bug assumed.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You have the table, and you can never again see a Sharpe above 2 without first asking which bug produced it.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s1"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">02</span><h3>IC with an error bar</h3><span class="dtime">~2 hrs</span></div>
+        <p class="dgate">Report a signal's information coefficient with a confidence interval.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Pick one signal. For each horizon h in 1, 5, 10, 20, 60 days, compute the rank correlation between the signal at t and the return from t to t+h.</li>
+          <li>Bootstrap each one — resample with replacement 10,000 times, take the 2.5th and 97.5th percentiles. <code>bootstrap_ci()</code> in the stats skill does this.</li>
+          <li>Put IC and its interval in a table, one row per horizon.</li>
+          <li>Find the horizon where IC peaks. That is your holding period — you no longer guess it.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>The table exists and you know which horizons have intervals that cross zero. Those signals are noise, and you found out for free.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s2"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">03</span><h3>Alpha or exposure</h3><span class="dtime">~3 hrs</span></div>
+        <p class="dgate">Alpha t-stat below 2 after factor adjustment means you have exposure, not alpha.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Get a standard factor return set — the Ken French data library publishes them free for equities.</li>
+          <li>Regress your strategy's daily returns on those factors.</li>
+          <li>Report three numbers only: the intercept (your alpha), its t-statistic, and the R² of the factor fit.</li>
+          <li>If R² is high, most of what you built was already buyable in an ETF. Name which factor.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You say your own alpha t-stat out loud without softening it — and if it's under 2, you've written down what you'll do about it.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s3"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">04</span><h3>Count your attempts</h3><span class="dtime">~1 hr</span></div>
+        <p class="dgate">Compute the deflated Sharpe ratio for how many variants you actually tried.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Write down every variant you tested. Honestly — including the ones you abandoned after one look and the parameters you nudged.</li>
+          <li>That count is almost always higher than you remember. Use the real number.</li>
+          <li>Deflate your best Sharpe by it: with N trials, the best of N random strategies looks good by chance alone.</li>
+          <li>Compare reported Sharpe against deflated Sharpe.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You have both numbers and the gap between them. Most promising backtests don't survive this, and learning it here costs nothing.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s4"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">05</span><h3>The free option you wrote</h3><span class="dtime">~1 hr</span></div>
+        <p class="dgate">Explain why a resting limit order is a short option position.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Place a limit buy below the market on Bybit, small size. Leave it.</li>
+          <li>Ask: under what conditions does this actually fill? Write the answer before it fills.</li>
+          <li>Note that it fills exactly when someone is willing to sell to you at that price — which is when they know or believe something you don't.</li>
+          <li>Now identify what you're paid for bearing that. That payment is the spread.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You can define adverse selection in one sentence, using your own resting order as the example.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s5"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">06</span><h3>Your capacity, in dollars</h3><span class="dtime">~2 hrs</span></div>
+        <p class="dgate">State the size at which your strategy's edge goes to zero.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Take the impact law: cost ≈ half the spread + k·σ·√(Q/V), where Q is your order and V is daily volume.</li>
+          <li>Estimate σ and V for one market you actually trade.</li>
+          <li>Compute your expected edge per trade in the same units.</li>
+          <li>Solve for the Q where cost equals edge. That number is your capacity.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You can state one dollar figure. And you'll notice it's far above what you trade — which is the advantage you currently hold over every fund.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s6"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">07</span><h3>Beat equal weight</h3><span class="dtime">~4 hrs</span></div>
+        <p class="dgate">Show your optimised portfolio beats naive equal-weighting out of sample, after costs.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Build the boring benchmark first: equal weight across your nine markets, rebalanced monthly.</li>
+          <li>Build the optimised version: volatility target plus an explicit turnover penalty.</li>
+          <li>Run both on out-of-sample data only, net of the cost model from drill 06.</li>
+          <li>Compare Sharpe and turnover.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You have an honest comparison — including if equal-weight won, which happens often and is a real finding, not a failure.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s7"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">08</span><h3>Thirty clean days</h3><span class="dtime">30 days</span></div>
+        <p class="dgate">Thirty consecutive days of clean reconciliation before a dollar goes live.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Run the strategy in shadow mode: it computes and logs every order it <em>would</em> send, and sends nothing.</li>
+          <li>Each day, log the expected fill price beside what the market actually did.</li>
+          <li>Reconcile daily: your recorded position versus what the exchange says. Any divergence is a bug, not a rounding issue.</li>
+          <li>Count the difference between expected and actual in R.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>Thirty consecutive days reconcile with zero unexplained differences. This is the stage where people lose money to typos rather than markets.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s8"> Gate passed</label>
+      </div>
+
+      <div class="drill">
+        <div class="dhead"><span class="dnum">09</span><h3>Kill something you love</h3><span class="dtime">Ongoing</span></div>
+        <p class="dgate">Retire a signal on the rule, on schedule, while you still like it.</p>
+        <h4>Do this</h4>
+        <ol>
+          <li>Write the retirement rule <em>now</em>, while nothing is wrong: the IC level or drawdown at which a signal switches off.</li>
+          <li>Track live IC against its confidence band, weekly.</li>
+          <li>When a signal breaches the rule, turn it off that week. Not after one more month.</li>
+          <li>Log what you retired and why. That log is your decay history.</li>
+        </ol>
+        <div class="pass"><h4>Passed when</h4><p>You've actually switched one off on schedule. This is the hardest gate here and the one that decides whether you're running a process or a hobby.</p></div>
+        <label class="gate"><input type="checkbox" data-k="s9"> Gate passed</label>
+      </div>
+
+    </div>
+
+    <div class="callout warn" style="margin-top:28px">
+      <h3>The rule about order</h3>
+      <p>Do them in sequence and don't advance on a failed gate. Drills 03 and 04 will most likely kill a strategy you're fond of — that's them working. A pipeline that kills your bad ideas cheaply is worth more than one that finds good ones slowly.</p>
+    </div>
+
+  </div>
+</div><!-- /view-drills -->
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var ids = ['eq','rk','px','atr','mult','stop','heat','mode'];
+  var fmt = function(n, d){
+    if(!isFinite(n)) return '—';
+    return n.toLocaleString('en-US',{minimumFractionDigits:d===undefined?2:d, maximumFractionDigits:d===undefined?2:d});
+  };
+
+  function toggleMode(){
+    var atrMode = $('mode').value === 'atr';
+    $('atrfield').style.display  = atrMode ? '' : 'none';
+    $('multfield').style.display = atrMode ? '' : 'none';
+    $('stopfield').style.display = atrMode ? 'none' : '';
+  }
+
+  function calc(){
+    toggleMode();
+    var eq   = parseFloat($('eq').value);
+    var rk   = parseFloat($('rk').value);
+    var px   = parseFloat($('px').value);
+    var heat = parseFloat($('heat').value) || 0;
+    var dist;
+
+    if($('mode').value === 'atr'){
+      dist = (parseFloat($('atr').value) || 0) * (parseFloat($('mult').value) || 0);
+    } else {
+      dist = Math.abs(px - (parseFloat($('stop').value) || 0));
+    }
+
+    var v = $('verdict');
+    if(!(eq > 0 && rk > 0 && px > 0 && dist > 0)){
+      ['o-dist','o-risk','o-units','o-notional','o-share','o-heat'].forEach(function(i){ $(i).textContent = '—'; });
+      v.className = ''; v.textContent = 'Fill in equity, risk, entry price and a stop to see the size.';
+      return;
+    }
+
+    var riskUsd  = eq * rk / 100;
+    var units    = riskUsd / dist;
+    var notional = units * px;
+    var share    = notional / eq;
+    var distPct  = dist / px * 100;
+    var totalHeat = heat + rk;
+
+    $('o-dist').textContent     = fmt(dist, dist < 10 ? 6 : 2) + '  (' + fmt(distPct) + '%)';
+    $('o-risk').textContent     = '$' + fmt(riskUsd);
+    $('o-units').textContent    = units < 1 ? fmt(units, 6) : fmt(units, units < 100 ? 4 : 2);
+    $('o-notional').textContent = '$' + fmt(notional);
+    $('o-share').textContent    = fmt(share, 2) + '×';
+    $('o-heat').textContent     = fmt(totalHeat) + '%';
+
+    var msgs = [];
+    if(rk > 2)          msgs.push('Risk per trade above 2% takes the median worst drawdown past 20%.');
+    if(totalHeat > 6)   msgs.push('Total heat is over the 6% portfolio cap — skip this signal and log the skip.');
+    if(share > 1)       msgs.push('This position needs leverage, which means the real risk is above the ' + rk + '% you entered.');
+    if(distPct < 1.5)   msgs.push('The stop is under 1.5% away — close enough that ordinary noise will take you out.');
+
+    if(msgs.length){
+      v.className = 'bad';
+      v.textContent = msgs.join(' ');
+    } else {
+      v.className = 'ok';
+      v.textContent = 'Within the rules: ' + fmt(share,2) + '× the account at risk of $' + fmt(riskUsd) +
+                      ', total heat ' + fmt(totalHeat) + '%. Place the stop in the same action as the entry.';
+    }
+  }
+
+  ids.forEach(function(i){
+    var el = $(i);
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+  calc();
+})();
+
+(function(){
+  var KEY = 'hardiestMethodGates.v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('label.gate input'));
+  if (!boxes.length) return;
+
+  var keys = [];
+  boxes.forEach(function(b){
+    var k = b.getAttribute('data-k');
+    if (keys.indexOf(k) === -1) keys.push(k);
+  });
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function save(state){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function setText(id, txt){
+    var el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  }
+  function setWidth(id, w){
+    var el = document.getElementById(id);
+    if (el) el.style.width = w;
+  }
+
+  function paint(state){
+    boxes.forEach(function(b){
+      var on = !!state[b.getAttribute('data-k')];
+      b.checked = on;
+      var card = b.closest('.stage') || b.closest('.drill');
+      if (card) card.classList.toggle('on', on);
+    });
+    var done = keys.filter(function(k){ return state[k]; }).length;
+    var pct = (done / keys.length * 100) + '%';
+    var label = done + ' of ' + keys.length + ' gates passed';
+    setWidth('pfill', pct); setText('ptext', label);
+    setWidth('dfill', pct); setText('dtext', label);
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener('change', function(){
+      var s = load();
+      s[b.getAttribute('data-k')] = b.checked;
+      save(s);
+      paint(s);
+    });
+  });
+  paint(load());
+})();
+
+(function(){
+  var VKEY = 'hardiestMethodView.v1';
+  var tabs = { method: document.getElementById('tab-method'),
+               drills: document.getElementById('tab-drills') };
+  var views = { method: document.getElementById('view-method'),
+                drills: document.getElementById('view-drills') };
+  var hints = { method: '16 parts · the full reference',
+                drills: '10 sittings · do, then tick' };
+  if (!tabs.method || !tabs.drills) return;
+
+  function show(name, remember){
+    Object.keys(views).forEach(function(k){
+      var on = (k === name);
+      views[k].hidden = !on;
+      tabs[k].setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    var h = document.getElementById('switchhint');
+    if (h) h.textContent = hints[name];
+    if (remember) { try { localStorage.setItem(VKEY, name); } catch (e) {} }
+    window.scrollTo(0, 0);
+  }
+
+  tabs.method.addEventListener('click', function(){ show('method', true); });
+  tabs.drills.addEventListener('click', function(){ show('drills', true); });
+
+  var saved = null;
+  try { saved = localStorage.getItem(VKEY); } catch (e) {}
+  if (saved === 'drills') show('drills', false);
+})();
+</script>
+
+</body>
+</html>
